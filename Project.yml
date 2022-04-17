@@ -1,6 +1,6 @@
 
 name: LiarGame
-configs: # configuration 별 설정
+configs:
     Debug: debug
     Release: release
 configFiles:
@@ -35,7 +35,7 @@ packages:
 
 
 targets:
- PhocaMarket:
+ LiarGame:
     type: application
     platform: iOS
     
