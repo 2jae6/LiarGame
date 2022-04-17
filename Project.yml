@@ -1,0 +1,87 @@
+
+name: LiarGame
+configs: # configuration 별 설정
+    Debug: debug
+    Release: release
+configFiles:
+    Debug: xcconfig/Project-Debug.xcconfig
+    Release: xcconfig/Project-Release.xcconfig
+    
+packages:
+    SnapKit:
+        url: https://github.com/SnapKit/SnapKit
+        from: 5.0.1
+    Then:
+        url: https://github.com/devxoul/Then
+        from: 2.7.0
+    RxSwift:
+        url: https://github.com/ReactiveX/RxSwift
+        from: 6.5.0
+    RxCocoa:
+        url: https://github.com/ReactiveX/RxSwift
+        from: 6.5.0
+    RxRelay:
+        url: https://github.com/ReactiveX/RxSwift
+        from: 6.5.0
+    Alamofire:
+        url: https://github.com/Alamofire/Alamofire
+        from: 5.0.0
+    FirebaseAuth:
+        url: https://github.com/firebase/firebase-ios-sdk
+        from: 8.15.0
+    FirebaseAnalytics:
+        url: https://github.com/firebase/firebase-ios-sdk
+        from: 8.15.0
+    FirebaseCrashlytics:
+        url: https://github.com/firebase/firebase-ios-sdk
+        from: 8.15.0
+        
+    SocketIO:
+        url: https://github.com/socketio/socket.io-client-swift
+        from: 15.2.0
+    Kingfisher:
+        url: https://github.com/onevcat/Kingfisher
+        from: 7.0.0
+    CHIPageControl:
+        url: https://github.com/ChiliLabs/CHIPageControl
+        from: 0.2.1
+    RxDataSources:
+        url: https://github.com/RxSwiftCommunity/RxDataSources
+        from: 5.0.0
+
+
+
+
+targets:
+ PhocaMarket:
+    type: application
+    platform: iOS
+    
+    deploymentTarget: "13.0"
+            
+    configFiles:
+    Debug: xcconfig/${LiarGame}-Debug.xcconfig
+    Release: xcconfig/${LiarGame}-Release.xcconfig
+   
+    sources: [LiarGame]
+    settings:
+        base:
+            INFOPLIST_FILE: LiarGame/Resources/Info.plist
+            PRODUCT_BUNDLE_IDENTIFIER: Jay.LiarGameme
+            
+    dependencies:
+        - package: SnapKit
+        - package: Then
+        - package: RxSwift
+        - package: Alamofire
+        - package: FirebaseAuth
+        - package: FirebaseAnalytics
+        - package: FirebaseCrashlytics
+        - package: SocketIO
+        - package: Kingfisher
+        - package: CHIPageControl
+        - package: RxDataSources
+        - framework: NaverThirdPartyLogin.framework
+
+
+
