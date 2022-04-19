@@ -17,9 +17,9 @@ final class HomeViewController: UIViewController{
     init(){
         super.init(nibName: nil, bundle: nil)
         self.view.addSubview(self.flexLayoutContainer)
-        self.flexLayoutContainer.flex.define{ flex in
+        self.flexLayoutContainer.flex.direction(.column).alignItems(.center).justifyContent(.center).padding(10).define{ flex in
             flex.backgroundColor(.systemPink)
-            flex.addItem(self.liarGameStartButton)
+            flex.addItem(self.liarGameStartButton).width(200).height(50).backgroundColor(.yellow)
         }
     }
     
@@ -34,34 +34,37 @@ final class HomeViewController: UIViewController{
         self.flexLayoutContainer.flex.layout()
     }
 
-    
-        
-        
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .green
+        self.view.backgroundColor = .white
+        self.setupView()
     }
     
     let flexLayoutContainer: UIView = UIView()
     
+    let disposeBag = DisposeBag()
     
     let liarGameStartButton = UIButton()
-}
-extension HomeViewController{
     
+}
+
+// MARK: - Setup View
+extension HomeViewController{
     private func setupView(){
         liarGameStartButton.do{
+            $0.setTitle("라이어 게임", for: .normal)
+            $0.setTitleColor(.black, for: .normal)
             self.view.addSubview($0)
         }
-        
-        
-        self.setupLayout()
     }
-    
-    private func setupLayout(){
-        
-        
+}
+
+// MARK: - Binding
+extension HomeViewController{
+    private func bindView(){
+        self.liarGameStartButton.rx.tap.asDriver()
+            .drive(onNext: {
+                
+            }).disposed(by: disposeBag)
     }
-    
-    
 }
