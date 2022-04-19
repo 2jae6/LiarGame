@@ -11,7 +11,7 @@ final class LiarGameModeViewController: UIViewController{
     
     
     override func viewDidLoad() {
-        
+        self.view.backgroundColor = .green
     }
     
     

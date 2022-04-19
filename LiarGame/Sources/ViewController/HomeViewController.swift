@@ -14,7 +14,8 @@ import RxCocoa
 
 final class HomeViewController: UIViewController{
     
-    init(){
+    init(reactor: HomeReactor){
+        self.reactor = reactor
         super.init(nibName: nil, bundle: nil)
         self.view.addSubview(self.flexLayoutContainer)
         self.flexLayoutContainer.flex.direction(.column).alignItems(.center).justifyContent(.center).padding(10).define{ flex in
@@ -38,7 +39,10 @@ final class HomeViewController: UIViewController{
         super.viewDidLoad()
         self.view.backgroundColor = .white
         self.setupView()
+        
+        self.bindView(reactor: self.reactor)
     }
+    let reactor: HomeReactor
     
     let flexLayoutContainer: UIView = UIView()
     
@@ -61,10 +65,22 @@ extension HomeViewController{
 
 // MARK: - Binding
 extension HomeViewController{
-    private func bindView(){
+    private func bindView(reactor: HomeReactor){
         self.liarGameStartButton.rx.tap.asDriver()
             .drive(onNext: {
-                
+                reactor.action.onNext(.updateMode("LIAR"))
             }).disposed(by: disposeBag)
+        
+        
+        reactor.state.map { $0.mode }
+        .subscribe(onNext: {
+            print($0)
+            if $0 == "LIAR"{
+                let liarVC = LiarGameModeViewController()
+                liarVC.modalPresentationStyle = .fullScreen
+                self.present(liarVC, animated: true, completion: nil)
+            }
+        })
+        .disposed(by: disposeBag)
     }
 }

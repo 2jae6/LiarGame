@@ -18,7 +18,8 @@ final class SplashViewController: UIViewController {
     }
  
     override func viewDidAppear(_ animated: Bool) {
-        let homeVC = HomeViewController()
+        let homeVC = HomeViewController(reactor: HomeReactor())
+        homeVC.modalPresentationStyle = .fullScreen
         self.present(homeVC, animated: true, completion: nil)
     }
     
