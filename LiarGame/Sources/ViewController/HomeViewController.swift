@@ -10,13 +10,17 @@ import PinLayout
 import FlexLayout
 import RxSwift
 import RxCocoa
+import ReactorKit
 
-
-final class HomeViewController: UIViewController{
+final class HomeViewController: UIViewController, View{
+    
+    
+   typealias Reactor = HomeReactor
     
     init(reactor: HomeReactor){
-        self.reactor = reactor
+
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
         self.view.addSubview(self.flexLayoutContainer)
         self.flexLayoutContainer.flex.direction(.column).alignItems(.center).justifyContent(.center).padding(10).define{ flex in
             flex.backgroundColor(.systemPink)
@@ -39,16 +43,13 @@ final class HomeViewController: UIViewController{
         super.viewDidLoad()
         self.view.backgroundColor = .white
         self.setupView()
-        
-        self.bindView(reactor: self.reactor)
     }
-    let reactor: HomeReactor
     
     let flexLayoutContainer: UIView = UIView()
     
-    let disposeBag = DisposeBag()
-    
+    var disposeBag: DisposeBag = DisposeBag()
     let liarGameStartButton = UIButton()
+    
     
 }
 
@@ -63,9 +64,9 @@ extension HomeViewController{
     }
 }
 
-// MARK: - Binding
+ // MARK: - Binding
 extension HomeViewController{
-    private func bindView(reactor: HomeReactor){
+    func bind(reactor: Reactor) {
         self.liarGameStartButton.rx.tap.asDriver()
             .drive(onNext: {
                 reactor.action.onNext(.updateMode("LIAR"))
@@ -76,11 +77,14 @@ extension HomeViewController{
         .subscribe(onNext: {
             print($0)
             if $0 == "LIAR"{
-                let liarVC = LiarGameModeViewController()
+                let liarVC = LiarGameModeViewController(reactor: LiarGameModeReactor())
                 liarVC.modalPresentationStyle = .fullScreen
                 self.present(liarVC, animated: true, completion: nil)
             }
         })
         .disposed(by: disposeBag)
     }
+ 
 }
+
+
