@@ -87,19 +87,19 @@ extension LiarGameModeViewController{
         
         defaultLiarGame.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .map{ Reactor.Action.selectMode("DEFAULT")}
+            .map{ Reactor.Action.selectMode(LiarGameMode.normal)}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         stupidLiarGame.rx.tap
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .map{ Reactor.Action.selectMode("STUPID")}
+            .map{ Reactor.Action.selectMode(LiarGameMode.stupid)}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mode }
         .withUnretained(self)
-        .subscribe(onNext: { _ in
+        .subscribe(onNext: { `self`, mode in
             let liarGameSubjectVC = LiarGameSubjectViewController()
             liarGameSubjectVC.modalPresentationStyle = .fullScreen
             self.present(liarGameSubjectVC, animated: true, completion: nil)

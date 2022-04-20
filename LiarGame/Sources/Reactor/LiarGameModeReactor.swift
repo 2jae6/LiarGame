@@ -12,15 +12,15 @@ import RxCocoa
 
 final class LiarGameModeReactor: Reactor{
     enum Action{
-        case selectMode(String?)
+        case selectMode(LiarGameMode?)
     }
     
     enum Mutation{
-        case setMode(String?)
+        case setMode(LiarGameMode?)
     }
     
     struct State{
-        var mode: String?
+        var mode: LiarGameMode?
     }
     let initialState: State = State()
     
