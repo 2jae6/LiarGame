@@ -6,13 +6,9 @@
 //
 
 import Foundation
-import UIKit.UIColor
-import UIKit.UIView
 import RxSwift
 import RxCocoa
-import RxRelay
 import YouTubeiOSPlayerHelper
-import UIKit
 
 final class RxYTPlayerDelegateProxy
 : DelegateProxy<YTPlayerView, YTPlayerViewDelegate>,
@@ -48,7 +44,11 @@ extension Reactive where Base: YTPlayerView {
     delegate
       .methodInvoked(#selector(YTPlayerViewDelegate.playerView(_:didStateChanged:)))
       .map { try castOrThrow(Int.self, $0[1]) }
-      .map { YTPlayerState(rawValue: $0)! }
+      .map { guard let value = YTPlayerState(rawValue: $0) else {
+        throw RxCocoaError.castingError(object: $0, targetType: YTPlayerState.self)
+      }
+        return value
+      }
   }
   
   var isReady: Observable<YTPlayerView> {
