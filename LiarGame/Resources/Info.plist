@@ -23,5 +23,7 @@
 	</dict>
 	<key>UILaunchStoryboardName</key>
 	<string>ㅠ</string>
+	<key>GOOGLE_APIKEY</key>
+	<string>$(GOOGLE_APIKEY)</string>
 </dict>
 </plist>
