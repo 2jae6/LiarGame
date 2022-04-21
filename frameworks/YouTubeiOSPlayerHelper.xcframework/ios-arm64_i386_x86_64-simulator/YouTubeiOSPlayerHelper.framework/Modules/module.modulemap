@@ -1,0 +1,6 @@
+framework module YouTubeiOSPlayerHelper {
+  umbrella header "YouTubeiOSPlayerHelper.h"
+
+  export *
+  module * { export * }
+}
