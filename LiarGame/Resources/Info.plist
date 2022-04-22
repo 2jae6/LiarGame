@@ -22,7 +22,7 @@
 		</dict>
 	</dict>
 	<key>UILaunchStoryboardName</key>
-	<string>ㅠ</string>
+	<string>LaunchScreen</string>
 	<key>GOOGLE_APIKEY</key>
 	<string>$(GOOGLE_APIKEY)</string>
 </dict>
