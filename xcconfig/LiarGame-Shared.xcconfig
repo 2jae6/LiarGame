@@ -180,3 +180,5 @@ SWIFT_VERSION = 5.0
 // compilation.
 
 TARGETED_DEVICE_FAMILY = 1,2
+ 
+#include "Secret.xcconfig"

@@ -110,3 +110,5 @@ Temporary Items
 
 # vim
 *.swp
+
+Secret.xcconfig
