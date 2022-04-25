@@ -7,31 +7,31 @@
 
 import Foundation
 import ReactorKit
-import RxSwift
 import RxCocoa
+import RxSwift
 
-final class LiarGameModeReactor: Reactor{
-    enum Action{
+final class LiarGameModeReactor: Reactor {
+    enum Action {
         case selectMode(LiarGameMode?)
     }
-    
-    enum Mutation{
+
+    enum Mutation {
         case setMode(LiarGameMode?)
     }
-    
-    struct State{
+
+    struct State {
         var mode: LiarGameMode?
     }
-    let initialState: State = State()
-    
-    
+
+    let initialState: State = .init()
+
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case let .selectMode(mode):
             return Observable.just(Mutation.setMode(mode))
         }
     }
-    
+
     func reduce(state: State, mutation: Mutation) -> State {
         switch mutation {
         case let .setMode(mode):
@@ -40,5 +40,4 @@ final class LiarGameModeReactor: Reactor{
             return newState
         }
     }
-    
 }
