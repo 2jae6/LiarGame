@@ -13,16 +13,21 @@ import RxCocoa
 
 final class HomeReactor: Reactor{
     enum Action{
-        case updateMode(String?)
+        case updateMode(GameMode)
     }
     enum Mutation{
-        case setMode(String?)
+        case setMode(GameMode)
     }
     struct State{
-        var mode: String?
+        var mode: GameMode?
     }
     
     let initialState = State()
+    
+    enum GameMode {
+        case liarGame
+        case randomMusicQuiz
+    }
     
     
     func mutate(action: Action) -> Observable<Mutation> {
