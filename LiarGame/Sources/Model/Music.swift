@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct Music: Codable {
+struct Music: Codable, Equatable {
   let title: String
   let artist: String
   /// youtube video ID
   let id: String
-  let startedAt: String
+  let startedAt: Float
   
   /** Music 생성자
    
@@ -27,12 +27,13 @@ struct Music: Codable {
    길이가 맞지 않을 경우 `return nil`
   */
   init?(from array: [String]) {
-    guard array.count == 4 else { return nil }
+    guard array.count == 4,
+    let startedAt = Float(array[3]) else { return nil }
     
     self.title = array[0]
     self.artist = array[1]
     self.id = array[2]
-    self.startedAt = array[3]
+    self.startedAt = startedAt
   }
 }
 

@@ -22,30 +22,30 @@ final class RandomQuizView: UIView {
   fileprivate let container = UIView()
   private let _tintColor = UIColor(hexString: "1D5C63")
   
-  private lazy var threeSecondButton = makeRoundedButton(tintColor: _tintColor, str: "3초")
-  private lazy var fiveSecondButton = makeRoundedButton(tintColor: _tintColor, str: "5초")
-  private lazy var tenSecondButton = makeRoundedButton(tintColor: _tintColor, str: "10초")
-  private lazy var playButton = makeRoundedButton(tintColor: _tintColor, str: "재생")
+  lazy var threeSecondButton = makeRoundedButton(tintColor: _tintColor, str: "3초")
+  lazy var fiveSecondButton = makeRoundedButton(tintColor: _tintColor, str: "5초")
+  lazy var tenSecondButton = makeRoundedButton(tintColor: _tintColor, str: "10초")
+  lazy var playButton = makeRoundedButton(tintColor: _tintColor, str: "재생")
   
   private lazy var currentVersionLabel = UILabel().then {
     $0.textColor = .label
   }
   
-  private lazy var updateButton = makeRoundedButton(tintColor: _tintColor).then {
+  lazy var updateButton = makeRoundedButton(tintColor: _tintColor).then {
     $0.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
   }
-  private lazy var shuffleButton = makeRoundedButton(tintColor: _tintColor).then {
+  lazy var shuffleButton = makeRoundedButton(tintColor: _tintColor).then {
     $0.setImage(UIImage(systemName: "shuffle"), for: .normal)
   }
-
-  private lazy var showAnswerButton = makeRoundedButton(tintColor: _tintColor, str: "정답 보기")
+  
+  lazy var showAnswerButton = makeRoundedButton(tintColor: _tintColor, str: "정답 보기")
   
   private lazy var answerLabel = DashedLineBorderdLabel(borderColor: _tintColor).then {
     $0.font = .preferredFont(forTextStyle: .title1)
     $0.isHidden = true
   }
   
-  private let ytPlayer = YTPlayerView(frame: .zero)
+  let ytPlayer = YTPlayerView(frame: .zero)
   
   override func layoutSubviews() {
     super.layoutSubviews()
@@ -54,9 +54,58 @@ final class RandomQuizView: UIView {
     container.flex.layout()
   }
   
+  func setAnswerLabel(_ value: (title: String, artist: String)?) {
+    if let value = value {
+      answerLabel.text = "\(value.title) - \(value.artist)"
+      answerLabel.isHidden = false
+      answerLabel.flex.markDirty()
+      container.flex.layout()
+    } else {
+      answerLabel.isHidden = true
+    }
+  }
+  
+  func setVersionLabel(_ value: String) {
+    currentVersionLabel.text = value
+    currentVersionLabel.flex.markDirty()
+    container.flex.layout()
+  }
+  
+  func changePlayButtonState(isPlaying: Bool) {
+    [threeSecondButton, fiveSecondButton, tenSecondButton]
+      .forEach { $0.isEnabled = !isPlaying }
+    playButton.setTitle(isPlaying ? "정지" : "시작", for: .normal)
+    if isPlaying { ytPlayer.playVideo() }
+    else { ytPlayer.stopVideo()
+    }
+  }
+  
+  private var loadingView: UIView?
+  
+  func setLoading(_ value: Bool) {
+    if value {
+    let loadingBackground = UIView(frame: bounds).then {
+      $0.backgroundColor = .systemGray.withAlphaComponent(0.5)
+    }
+    let indicator = UIActivityIndicatorView(style: .large)
+    indicator.color = _tintColor
+    
+    addSubview(loadingBackground)
+    loadingBackground.addSubview(indicator)
+    indicator.center = center
+    self.loadingView = loadingBackground
+      indicator.startAnimating()
+    } else {
+      loadingView?.removeFromSuperview()
+    }
+    
+  }
+  
   private func setupViews() {
     backgroundColor = UIColor(hexString: "EDE6DB")
     addSubview(container)
+    container.addSubview(ytPlayer)
+    ytPlayer.isHidden = true
     
     container.flex
       .direction(.column).justifyContent(.center).marginHorizontal(20).define {
@@ -89,24 +138,12 @@ final class RandomQuizView: UIView {
           .width(150).height(50)
           .alignSelf(.center)
         $0.addItem(answerLabel)
-          .minHeight(answerLabel.font.lineHeight)
-          .minWidth(75)
+          .padding(1)
           .alignSelf(.center)
         
       }
       .verticallySpacing(20)
-    
   }
-  
-  func setAnswerLabel(_ value: String?) {
-    if value != nil {
-      answerLabel.isHidden = false
-      answerLabel.text = value
-    } else {
-      answerLabel.isHidden = true
-    }
-  }
-  
 }
 
 fileprivate func makeRoundedButton(tintColor: UIColor, str: String? = nil) -> UIButton {

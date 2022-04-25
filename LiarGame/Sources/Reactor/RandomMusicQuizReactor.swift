@@ -13,6 +13,7 @@ final class RandomMusicQuizReactor: Reactor {
     self.repository = repository
   }
   
+  var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
   var initialState = State()
   private let repository: RandomMusicRepository
   
@@ -25,19 +26,20 @@ final class RandomMusicQuizReactor: Reactor {
   enum Action {
     case updateMusicList
     case playMusic(second: PlaySeconds)
-    case didPlayButtonTapped
-    case didStopButtonTapped
+    case didPlayToggleButtonTapped
     case didAnswerButtonTapped
     case shuffle
+    case playerReady
+    case needCurrentVersion
   }
   
   enum Mutation {
     case updatePlayingState(Bool)
     case updateCurrentVersion(String)
-    case updateCurrentMusic(Music)
+    case updateCurrentMusic(Music?)
     case updateAnswer((String, String)?)
     case updateLoading(Bool)
-    case updateMusicList([Music])
+    case ignore
   }
   
   struct State {
@@ -46,34 +48,50 @@ final class RandomMusicQuizReactor: Reactor {
     var currentVersion: String = ""
     var answer: (title: String, artist: String)?
     var currentMusic: Music?
-    // music List 가 관리되어야 할 상태에 포함되는지 고려해야 함.
-    var musicList: [Music] = []
   }
   
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .updateMusicList:
-      return repository.getNewestVersion()
-        .asObservable()
-        .map { Mutation.updateMusicList($0) }
+      return .concat([
+        .just(.updateLoading(true)),
+        .just(.updatePlayingState(false)),
+        .just(.updateAnswer(nil)),
+        repository.getNewestVersion()
+          .asObservable()
+          .map { _ in Mutation.ignore },
+        .just(.updateCurrentMusic(shuffleMusic())),
+        .just(.updateCurrentVersion(repository.currentVersion))
+      ])
+      .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
       
     case let .playMusic(second):
       return .concat([
         .just(.updatePlayingState(true)),
         .just(.updatePlayingState(false))
-        .timeout(.seconds(second.rawValue), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
+        .delay(.seconds(second.rawValue), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
       ])
       
-    case .didPlayButtonTapped:
-      return .just(.updatePlayingState(true))
-    case .didStopButtonTapped:
-      return .just(.updatePlayingState(false))
+    case .didPlayToggleButtonTapped:
+      return .just(.updatePlayingState(!currentState.isPlaying))
       
     case .didAnswerButtonTapped:
       return .just(.updateAnswer(currentAnswer()))
       
     case .shuffle:
-      return .just(.updateCurrentMusic(shuffleMusic()))
+      return .concat(
+        .just(.updateLoading(true)),
+        .just(.updatePlayingState(false)),
+        .just(.updateAnswer(nil)),
+        .just(.updateCurrentMusic(shuffleMusic()))
+      )
+      .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
+      
+    case .playerReady:
+      return .just(.updateLoading(false))
+      
+    case .needCurrentVersion:
+      return .just(.updateCurrentVersion(repository.currentVersion))
     }
   }
   
@@ -90,8 +108,7 @@ final class RandomMusicQuizReactor: Reactor {
       state.answer = info
     case let .updateLoading(boolean):
       state.isLoading = boolean
-    case let .updateMusicList(list):
-      state.musicList = list
+    case .ignore: break
     }
     return state
   }
@@ -104,10 +121,11 @@ final class RandomMusicQuizReactor: Reactor {
     }
   }
   
-  private func shuffleMusic() -> Music {
-    let size = currentState.musicList.count
+  private func shuffleMusic() -> Music? {
+    guard repository.musicList.count > 0 else { return nil }
+    let size = repository.musicList.count
     let randomNumber: Int = Int(arc4random()) % size
     
-    return currentState.musicList[randomNumber]
+    return repository.musicList[randomNumber]
   }
 }
