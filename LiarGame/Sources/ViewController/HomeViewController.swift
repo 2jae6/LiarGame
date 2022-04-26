@@ -95,6 +95,7 @@ extension HomeViewController {
                 }
             })
             .disposed(by: disposeBag)
+
     }
     
 }
