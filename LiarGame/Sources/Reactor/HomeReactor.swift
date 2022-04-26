@@ -24,12 +24,6 @@ final class HomeReactor: Reactor{
     
     let initialState = State()
     
-    enum GameMode {
-        case liarGame
-        case randomMusicQuiz
-    }
-    
-    
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case let .updateMode(mode):

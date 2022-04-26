@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DashedLineBorderdLabel: UILabel {
+final class DashedLineBorderdLabel: UILabel {
   @available(*, unavailable)
   required init?(coder: NSCoder) { fatalError() }
   init(cornerRadius: CGFloat = 8.0, borderWidth: CGFloat = 1.0, borderColor: UIColor) {
@@ -17,7 +17,6 @@ class DashedLineBorderdLabel: UILabel {
     super.init(frame: .zero)
     self.layer.cornerRadius = cornerRadius
   }
-  
   
   private let borderWidth: CGFloat
   private let borderColor: UIColor

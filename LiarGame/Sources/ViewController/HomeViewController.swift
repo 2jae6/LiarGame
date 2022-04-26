@@ -40,9 +40,9 @@ final class HomeViewController: UIViewController, View{
     
     var disposeBag: DisposeBag = DisposeBag()
     
-    private lazy var gameList = [liarGameStartButton, randomMusicQuiz]
+    private lazy var gameList = [liarGameStartButton, randomMusicQuizButton]
     private let liarGameStartButton = makeGameButton(str: "라이어 게임")
-    private let randomMusicQuiz = makeGameButton(str: "랜덤 음악 맞추기")
+    private let randomMusicQuizButton = makeGameButton(str: "랜덤 음악 맞추기")
     
 }
 
@@ -72,7 +72,7 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
         
-        randomMusicQuiz.rx.tap
+        randomMusicQuizButton.rx.tap
             .map { _ in Reactor.Action.updateMode(.randomMusicQuiz) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
