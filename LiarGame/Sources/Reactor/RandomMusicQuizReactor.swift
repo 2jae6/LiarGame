@@ -11,10 +11,6 @@ import ReactorKit
 final class RandomMusicQuizReactor: Reactor {
   init(repository: RandomMusicRepository) {
     self.repository = repository
-//    state.subscribe(onNext: {
-//      print($0)
-//    })
-//    .disposed(by: disposeBag)
   }
   
   private var disposeBag = DisposeBag()
@@ -40,7 +36,7 @@ final class RandomMusicQuizReactor: Reactor {
     case buffering
     /// 비디오 재생 중
     case playing
-    /// stopVideo 시 cued
+    /// 재생정지(stopVideo) 호출 시 cued
     case cued
     case unknwon
   }
@@ -159,13 +155,15 @@ final class RandomMusicQuizReactor: Reactor {
     self.playerState = state
     guard playerState != .pending else { return .empty() }
     
-    if case .playing = playerState,
-       let second = self.second {
+    switch playerState {
+    case .playing:
       return .just(.updatePlayStopState(false))
-        .delay(.seconds(second.rawValue), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
-    } else if case .ready = playerState {
+    case .ready:
       return .just(.updateLoading(false))
-    } else {
+    case .cued:
+      self.second = nil
+      fallthrough
+    default:
       return .empty()
     }
   }
