@@ -16,6 +16,7 @@ final class RandomMusicQuizReactor: Reactor {
   var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
   var initialState = State()
   private let repository: RandomMusicRepository
+  private var isPlayerPending = false
   
   enum PlaySeconds: Int {
     case three = 3
@@ -53,6 +54,7 @@ final class RandomMusicQuizReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .updateMusicList:
+      guard !isPlayerPending else { return .empty() }
       return .concat([
         .just(.updateLoading(true)),
         .just(.updatePlayingState(false)),
@@ -79,15 +81,16 @@ final class RandomMusicQuizReactor: Reactor {
       return .just(.updateAnswer(currentAnswer()))
       
     case .shuffle:
+      guard !isPlayerPending else { return .empty() }
       return .concat(
         .just(.updateLoading(true)),
         .just(.updatePlayingState(false)),
         .just(.updateAnswer(nil)),
         .just(.updateCurrentMusic(shuffleMusic()))
       )
-      .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
       
     case .playerReady:
+      isPlayerPending = false
       return .just(.updateLoading(false))
       
     case .needCurrentVersion:

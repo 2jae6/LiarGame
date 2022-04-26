@@ -27,11 +27,16 @@ final class RandomMusicQuizViewController: UIViewController, View {
     self.view = content
   }
   
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    reactor.map {
+      $0.action.onNext(.needCurrentVersion)
+      $0.action.onNext(.shuffle)
+    }
+  }
+  
   var disposeBag = DisposeBag()
   func bind(reactor: RandomMusicQuizReactor) {
-    reactor.action.onNext(.needCurrentVersion)
-    reactor.action.onNext(.shuffle)
-    
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
   }
