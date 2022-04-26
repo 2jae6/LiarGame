@@ -67,15 +67,14 @@ extension HomeViewController{
  // MARK: - Binding
 extension HomeViewController{
     func bind(reactor: Reactor) {
-        self.liarGameStartButton.rx.tap.asDriver()
-            .drive(onNext: {
+        self.liarGameStartButton.rx.tap
+            .subscribe(onNext:{
                 reactor.action.onNext(.updateMode("LIAR"))
             }).disposed(by: disposeBag)
         
         
         reactor.state.map { $0.mode }
         .subscribe(onNext: {
-            print($0)
             if $0 == "LIAR"{
                 let liarVC = LiarGameModeViewController(reactor: LiarGameModeReactor())
                 liarVC.modalPresentationStyle = .fullScreen

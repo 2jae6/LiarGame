@@ -97,23 +97,24 @@ extension LiarGameSubjectViewController{
 extension LiarGameSubjectViewController{
     
     func bind(reactor: LiarGameSubjectReactor) {
-        animalButton.rx.tap.asDriver()
-            .drive(onNext:{
+        animalButton.rx.tap
+            .subscribe(onNext:{
                 reactor.action.onNext(.selectSubject(.animal))
             }).disposed(by: disposeBag)
-        
-        exerciseButton.rx.tap.asDriver()
-            .drive(onNext:{
+            
+        exerciseButton.rx.tap
+            .subscribe(onNext:{
                 reactor.action.onNext(.selectSubject(.exercise))
             }).disposed(by: disposeBag)
+            
         
-        foodButton.rx.tap.asDriver()
-            .drive(onNext:{
+        foodButton.rx.tap
+            .subscribe(onNext:{
                 reactor.action.onNext(.selectSubject(.food))
             }).disposed(by: disposeBag)
-        
-        electronicEquipmentButton.rx.tap.asDriver()
-            .drive(onNext:{
+            
+        electronicEquipmentButton.rx.tap
+            .subscribe(onNext:{
                 reactor.action.onNext(.selectSubject(.electronicEquipment))
             }).disposed(by: disposeBag)
         
