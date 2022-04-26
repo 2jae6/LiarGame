@@ -43,17 +43,17 @@ final class RandomMusicQuizViewController: UIViewController, View {
   
   private func bindAction(reactor: RandomMusicQuizReactor) {
     content.threeSecondButton.rx.tap
-      .map { _ in Reactor.Action.playMusic(second: .three) }
+      .map { _ in Reactor.Action.playMusicButtonTapped(second: .three) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
     content.fiveSecondButton.rx.tap
-      .map { _ in Reactor.Action.playMusic(second: .five) }
+      .map { _ in Reactor.Action.playMusicButtonTapped(second: .five) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
     content.tenSecondButton.rx.tap
-      .map { _ in Reactor.Action.playMusic(second: .ten) }
+      .map { _ in Reactor.Action.playMusicButtonTapped(second: .ten) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
@@ -78,7 +78,26 @@ final class RandomMusicQuizViewController: UIViewController, View {
       .disposed(by: disposeBag)
     
     content.ytPlayer.rx.isReady
-      .map { _ in Reactor.Action.playerReady }
+      .map { _ in Reactor.Action.playerState(.ready) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+    
+    content.ytPlayer.rx.state
+      .map {
+        let playerState: RandomMusicQuizReactor.PlayerState
+        switch $0 {
+        case .playing:
+          playerState = .playing
+        case .buffering:
+          playerState = .buffering
+        case .cued:
+          playerState = .cued
+        default:
+          playerState = .unknwon
+        }
+        return playerState
+      }
+      .map { Reactor.Action.playerState($0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
     
@@ -118,7 +137,7 @@ final class RandomMusicQuizViewController: UIViewController, View {
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: content.changePlayButtonState(isPlaying:))
       .disposed(by: disposeBag)
-    
+
   }
   
 }

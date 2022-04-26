@@ -11,31 +11,52 @@ import ReactorKit
 final class RandomMusicQuizReactor: Reactor {
   init(repository: RandomMusicRepository) {
     self.repository = repository
+//    state.subscribe(onNext: {
+//      print($0)
+//    })
+//    .disposed(by: disposeBag)
   }
+  
+  private var disposeBag = DisposeBag()
   
   var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
   var initialState = State()
   private let repository: RandomMusicRepository
-  private var isPlayerPending = false
+  private var playerState: PlayerState = .unknwon
+  private var second: PlaySecond?
   
-  enum PlaySeconds: Int {
+  enum PlaySecond: Int {
     case three = 3
     case five = 5
     case ten = 10
   }
   
+  enum PlayerState {
+    /// 비디오 로드 후 대기 중
+    case pending
+    /// 비디오 로드 완료
+    case ready
+    /// 비디오 재생 시 버퍼링
+    case buffering
+    /// 비디오 재생 중
+    case playing
+    /// stopVideo 시 cued
+    case cued
+    case unknwon
+  }
+  
   enum Action {
     case updateMusicList
-    case playMusic(second: PlaySeconds)
+    case playMusicButtonTapped(second: PlaySecond)
     case didPlayToggleButtonTapped
     case didAnswerButtonTapped
     case shuffle
-    case playerReady
+    case playerState(PlayerState)
     case needCurrentVersion
   }
   
   enum Mutation {
-    case updatePlayingState(Bool)
+    case updatePlayStopState(Bool)
     case updateCurrentVersion(String)
     case updateCurrentMusic(Music?)
     case updateAnswer((String, String)?)
@@ -54,10 +75,11 @@ final class RandomMusicQuizReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .updateMusicList:
-      guard !isPlayerPending else { return .empty() }
+      guard playerState != .pending else { return .empty() }
+      playerState = .pending
       return .concat([
         .just(.updateLoading(true)),
-        .just(.updatePlayingState(false)),
+        .just(.updatePlayStopState(false)),
         .just(.updateAnswer(nil)),
         repository.getNewestVersion()
           .asObservable()
@@ -67,41 +89,40 @@ final class RandomMusicQuizReactor: Reactor {
       ])
       .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
       
-    case let .playMusic(second):
+    case let .playMusicButtonTapped(second):
+      self.second = second
       return .concat([
-        .just(.updatePlayingState(true)),
-        .just(.updatePlayingState(false))
-        .delay(.seconds(second.rawValue), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
+        .just(.updatePlayStopState(true)),
       ])
       
     case .didPlayToggleButtonTapped:
-      return .just(.updatePlayingState(!currentState.isPlaying))
+      return .just(.updatePlayStopState(!currentState.isPlaying))
       
     case .didAnswerButtonTapped:
       return .just(.updateAnswer(currentAnswer()))
       
     case .shuffle:
-      guard !isPlayerPending else { return .empty() }
+      guard playerState != .pending else { return .empty() }
+      playerState = .pending
       return .concat(
         .just(.updateLoading(true)),
-        .just(.updatePlayingState(false)),
+        .just(.updatePlayStopState(false)),
         .just(.updateAnswer(nil)),
         .just(.updateCurrentMusic(shuffleMusic()))
       )
       
-    case .playerReady:
-      isPlayerPending = false
-      return .just(.updateLoading(false))
-      
     case .needCurrentVersion:
       return .just(.updateCurrentVersion(repository.currentVersion))
+      
+    case let .playerState(state):
+      return playerStateHandler(state)
     }
   }
   
   func reduce(state: State, mutation: Mutation) -> State {
     var state = state
     switch mutation {
-    case let .updatePlayingState(boolean):
+    case let .updatePlayStopState(boolean):
       state.isPlaying = boolean
     case let .updateCurrentVersion(version):
       state.currentVersion = version
@@ -130,5 +151,22 @@ final class RandomMusicQuizReactor: Reactor {
     let randomNumber: Int = Int(arc4random()) % size
     
     return repository.musicList[randomNumber]
+  }
+  
+  // `YTPlayerView.playVideo()` 호출 시점과 실제 재생 시점이 다름
+  // `YTPlayerView` 의 state 를 확인해서 재생 타이머를 수행
+  private func playerStateHandler(_ state: PlayerState) -> Observable<Mutation> {
+    self.playerState = state
+    guard playerState != .pending else { return .empty() }
+    
+    if case .playing = playerState,
+       let second = self.second {
+      return .just(.updatePlayStopState(false))
+        .delay(.seconds(second.rawValue), scheduler: ConcurrentDispatchQueueScheduler(qos: .default))
+    } else if case .ready = playerState {
+      return .just(.updateLoading(false))
+    } else {
+      return .empty()
+    }
   }
 }
