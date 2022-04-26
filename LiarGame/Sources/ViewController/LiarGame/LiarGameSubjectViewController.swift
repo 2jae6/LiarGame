@@ -7,8 +7,10 @@
 
 import UIKit
 
-final class LiarGameSubjectViewController: UIViewController {
+final class LiarGameSubjectViewController: UIViewController{
+    
+    
     override func viewDidLoad() {
-        view.backgroundColor = .green
+        self.view.backgroundColor = .green
     }
 }

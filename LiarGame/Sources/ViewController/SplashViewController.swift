@@ -5,20 +5,23 @@
 //  Created by Jay on 2022/04/17.
 //
 
-import FlexLayout
-import PinLayout
-import Then
 import UIKit
+import PinLayout
+import FlexLayout
+import Then
 
 final class SplashViewController: UIViewController {
+   
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .brown
+        self.view.backgroundColor = .brown
     }
-
-    override func viewDidAppear(_: Bool) {
+ 
+    override func viewDidAppear(_ animated: Bool) {
         let homeVC = HomeViewController(reactor: HomeReactor())
         homeVC.modalPresentationStyle = .fullScreen
-        present(homeVC, animated: true, completion: nil)
+        self.present(homeVC, animated: true, completion: nil)
     }
+    
 }
+

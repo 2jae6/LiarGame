@@ -15,7 +15,7 @@ struct UserDefault<Value> {
 
     var wrappedValue: Value {
         get {
-            container.object(forKey: key) as? Value ?? defaultValue
+            return container.object(forKey: key) as? Value ?? defaultValue
         }
         set {
             container.set(newValue, forKey: key)
