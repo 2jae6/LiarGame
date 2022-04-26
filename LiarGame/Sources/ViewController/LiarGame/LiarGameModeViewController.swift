@@ -100,7 +100,7 @@ extension LiarGameModeViewController{
         reactor.state.map { $0.mode }
         .withUnretained(self)
         .subscribe(onNext: { `self`, mode in
-            let liarGameSubjectVC = LiarGameSubjectViewController()
+            let liarGameSubjectVC = LiarGameSubjectViewController(reactor: LiarGameSubjectReactor() )
             liarGameSubjectVC.modalPresentationStyle = .fullScreen
             self.present(liarGameSubjectVC, animated: true, completion: nil)
         }).disposed(by: disposeBag)
