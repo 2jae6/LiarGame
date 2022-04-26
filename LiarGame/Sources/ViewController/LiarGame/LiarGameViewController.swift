@@ -38,30 +38,30 @@ final class LiarGameViewController: UIViewController{
         self.setupView()
     }
     
-    let flexContainer: UIView = UIView()
+    private let flexContainer: UIView = UIView()
 
-    var selectSubject: LiarGameSubject
+    private var selectSubject: LiarGameSubject
     // 가림막 만들기 가림막은 클릭 시 확인창이 뜸
-    let curtainView: UIView = UIView()
-    let curtainLabel: UILabel = UILabel()
-    let curtainButton: UIButton = UIButton()
+    private let curtainView: UIView = UIView()
+    private let curtainLabel: UILabel = UILabel()
+    private let curtainButton: UIButton = UIButton()
     
     // 단어 나타나기 화면 만들기
-    let liarView: UIView = UIView()
-    let liarLabel: UILabel = UILabel()
-    let liarButton: UIButton = UIButton()
+    private let liarView: UIView = UIView()
+    private let liarLabel: UILabel = UILabel()
+    private let liarButton: UIButton = UIButton()
     
     // 게임 시작!!!
-    let endView: UIView = UIView()
-    let endLabel: UILabel = UILabel()
-    let endButton: UIButton = UIButton()
+    private let endView: UIView = UIView()
+    private let endLabel: UILabel = UILabel()
+    private let endButton: UIButton = UIButton()
     
     
 }
 extension LiarGameViewController{
     
     private func setupView(){
-        self.view.addSubview(flexContainer)
+//        self.view.addSubview(flexContainer)
         
         curtainView.do{
             self.view.addSubview($0)

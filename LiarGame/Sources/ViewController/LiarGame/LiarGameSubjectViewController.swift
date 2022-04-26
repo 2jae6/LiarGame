@@ -43,16 +43,16 @@ final class LiarGameSubjectViewController: UIViewController, View{
         self.setupView()
     }
     
-    let flexLayoutContainer: UIView = UIView()
+    private let flexLayoutContainer: UIView = UIView()
     
     
     var disposeBag: DisposeBag = DisposeBag()
     
-    let animalButton: UIButton = UIButton()
-    let exerciseButton: UIButton = UIButton()
-    let foodButton: UIButton = UIButton()
-    let electronicEquipmentButton: UIButton = UIButton()
-    let jobButton: UIButton = UIButton()
+    private let animalButton: UIButton = UIButton()
+    private let exerciseButton: UIButton = UIButton()
+    private let foodButton: UIButton = UIButton()
+    private let electronicEquipmentButton: UIButton = UIButton()
+    private let jobButton: UIButton = UIButton()
     
     
 }
@@ -123,6 +123,8 @@ extension LiarGameSubjectViewController{
             }).disposed(by: disposeBag)
          
         reactor.state.map{ $0.selectedSubject }
+        .compactMap{ $0 }
+        .distinctUntilChanged()
         .withUnretained(self)
         .subscribe(onNext:{ `self`, subject in
             let liarGameVC = LiarGameViewController(subject: subject ?? .job)

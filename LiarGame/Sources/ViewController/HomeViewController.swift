@@ -45,10 +45,10 @@ final class HomeViewController: UIViewController, View{
         self.setupView()
     }
     
-    let flexLayoutContainer: UIView = UIView()
+    private let flexLayoutContainer: UIView = UIView()
     
     var disposeBag: DisposeBag = DisposeBag()
-    let liarGameStartButton = UIButton()
+    private let liarGameStartButton = UIButton()
     
     
 }
