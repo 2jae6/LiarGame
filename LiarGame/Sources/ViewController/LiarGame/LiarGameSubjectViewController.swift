@@ -60,31 +60,26 @@ extension LiarGameSubjectViewController{
     
     func setupView(){
         animalButton.do{
-            self.view.addSubview($0)
             $0.backgroundColor = .yellow
             $0.setTitle("동물", for: .normal)
             $0.setTitleColor(.black, for: .normal)
         }
         exerciseButton.do{
-            self.view.addSubview($0)
             $0.backgroundColor = .yellow
             $0.setTitle("운동", for: .normal)
             $0.setTitleColor(.black, for: .normal)
         }
         foodButton.do{
-            self.view.addSubview($0)
             $0.backgroundColor = .yellow
             $0.setTitle("음식", for: .normal)
             $0.setTitleColor(.black, for: .normal)
         }
         electronicEquipmentButton.do{
-            self.view.addSubview($0)
             $0.backgroundColor = .yellow
             $0.setTitle("전자기기", for: .normal)
             $0.setTitleColor(.black, for: .normal)
         }
         jobButton.do{
-            self.view.addSubview($0)
             $0.backgroundColor = .yellow
             $0.setTitle("직업", for: .normal)
             $0.setTitleColor(.black, for: .normal)
@@ -128,7 +123,7 @@ extension LiarGameSubjectViewController{
         .distinctUntilChanged()
         .withUnretained(self)
         .subscribe(onNext:{ `self`, subject in
-            let liarGameVC = LiarGameViewController(subject: subject ?? .job)
+            let liarGameVC = LiarGameViewController(subject: subject)
             liarGameVC.modalPresentationStyle = .fullScreen
             self.present(liarGameVC, animated: true, completion: nil)
             
