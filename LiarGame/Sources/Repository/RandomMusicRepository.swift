@@ -33,7 +33,7 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
     Self._currentVersion
   }
   
-  @UserDefault(key: "RandomMusicVersion", defaultValue: "")
+  @UserDefault(key: "RandomMusicVersion", defaultValue: "unknwon")
   private static var _currentVersion: String
   
   /** 저장되어있는 음악 목록을 가져옵니다.
@@ -61,7 +61,7 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
   func getNewestVersion() -> Single<[Music]> {
     _newsetVersion
       .flatMap { _version -> Single<[Music]> in
-        let arr = _version.components(separatedBy: ",")
+        let arr = _version.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: ",")
         let version = arr[0]
         let length = arr[1]
         guard version != self.currentVersion else { return .just(try self.readMuicList()) }
@@ -141,8 +141,7 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
   }
   
   /// 음악 데이터 읽어오기
-  // TODO: - private 으로 변경///
-  func readMuicList() throws -> [Music] {
+  private func readMuicList() throws -> [Music] {
     let path = try musicDataPath()
     let data = try Data(contentsOf: path)
     
@@ -150,8 +149,7 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
   }
   
   /// 음악 데이터를 저장하는 경로
-  // TODO: - private 으로 변경/// 
-  func musicDataPath() throws -> URL {
+  private func musicDataPath() throws -> URL {
     guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
       throw RandomMusicRepositoryError.fileAccessFailed
     }
