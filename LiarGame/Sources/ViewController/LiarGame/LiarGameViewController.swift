@@ -21,11 +21,8 @@ final class LiarGameViewController: UIViewController, View{
         self.mode = mode
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
-//        self.view.addSubview(flexContainer)
-//        flexContainer.flex.justifyContent(.center).alignItems(.center).direction(.column).backgroundColor(.green).define{ flex in
-//            flex.addItem(self.curtainView).width(300).height(300).backgroundColor(.yellow
-//            )
-//        }
+
+      
     }
     
     @available(*, unavailable)
@@ -34,7 +31,7 @@ final class LiarGameViewController: UIViewController, View{
     }
     
     override func viewDidLayoutSubviews() {
-//        self.setupView()
+
     }
     override func viewDidLoad() {
         self.view.backgroundColor = .white
@@ -79,7 +76,7 @@ extension LiarGameViewController{
         self.curtainButton.pin.all()
         
         curtainLabel.do{
-            $0.backgroundColor = .red
+            $0.backgroundColor = .blue
             $0.text = "터치해서 가림막을 제거해주세요"
             $0.font = .systemFont(ofSize: 14, weight: .semibold)
         }
@@ -164,7 +161,6 @@ extension LiarGameViewController{
         .subscribe(onNext: {[weak self] _ in
             guard let self = self else { return }
             self.changeView(currentView: self.liarView, newView: self.curtainView)
-            
         }).disposed(by: disposeBag)
  
     }

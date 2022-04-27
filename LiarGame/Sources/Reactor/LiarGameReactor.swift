@@ -38,6 +38,7 @@ final class LiarGameReactor: Reactor{
         }
     }
     
+    
     func reduce(state: State, mutation: Mutation) -> State {
         switch mutation {
         case let .setCurtain(tapped):
@@ -51,4 +52,5 @@ final class LiarGameReactor: Reactor{
             return newState
         }
     }
+    
 }
