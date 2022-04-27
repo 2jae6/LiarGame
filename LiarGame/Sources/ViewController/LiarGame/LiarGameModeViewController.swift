@@ -98,9 +98,11 @@ extension LiarGameModeViewController{
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.mode }
+        .compactMap{ $0 }
+        .distinctUntilChanged()
         .withUnretained(self)
         .subscribe(onNext: { `self`, mode in
-            let liarGameSubjectVC = LiarGameSubjectViewController(reactor: LiarGameSubjectReactor() )
+            let liarGameSubjectVC = LiarGameSubjectViewController(reactor: LiarGameSubjectReactor(), mode: mode, memberCount: Int(self.memberCountStepper.value)) 
             liarGameSubjectVC.modalPresentationStyle = .fullScreen
             self.present(liarGameSubjectVC, animated: true, completion: nil)
         }).disposed(by: disposeBag)

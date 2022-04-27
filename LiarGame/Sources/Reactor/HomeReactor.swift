@@ -14,6 +14,7 @@ import RxCocoa
 final class HomeReactor: Reactor{
     enum Action{
         case updateMode(GameMode)
+        
     }
     enum Mutation{
         case setMode(GameMode)

@@ -15,8 +15,9 @@ final class LiarGameSubjectViewController: UIViewController, View{
     
     
     
-    init(reactor: LiarGameSubjectReactor){
-        
+    init(reactor: LiarGameSubjectReactor, mode: LiarGameMode, memberCount: Int){
+        self.mode = mode
+        self.memberCount = memberCount
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
         self.view.addSubview(flexLayoutContainer)
@@ -42,7 +43,8 @@ final class LiarGameSubjectViewController: UIViewController, View{
         self.view.backgroundColor = .green
         self.setupView()
     }
-    
+    var mode: LiarGameMode
+    var memberCount: Int = 3
     private let flexLayoutContainer: UIView = UIView()
     
     
@@ -123,7 +125,7 @@ extension LiarGameSubjectViewController{
         .distinctUntilChanged()
         .withUnretained(self)
         .subscribe(onNext:{ `self`, subject in
-            let liarGameVC = LiarGameViewController(subject: subject)
+            let liarGameVC = LiarGameViewController(reactor: LiarGameReactor(), subject: subject, mode: self.mode, memberCount: self.memberCount)
             liarGameVC.modalPresentationStyle = .fullScreen
             self.present(liarGameVC, animated: true, completion: nil)
             
