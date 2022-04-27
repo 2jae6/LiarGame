@@ -8,11 +8,8 @@
 import Foundation
 
 // MARK: - MusicSheetDTO
+
 struct MusicSheetDTO: Decodable {
-    let range, majorDimension: String
-    let values: [[String]]
+  let range, majorDimension: String
+  let values: [[String]]
 }
-
-
-
-

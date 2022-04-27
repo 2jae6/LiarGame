@@ -7,8 +7,7 @@
 
 import Foundation
 
-
-enum LiarGameMode{
-    case normal
-    case stupid
+enum LiarGameMode {
+  case normal
+  case stupid
 }

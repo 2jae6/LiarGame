@@ -8,6 +8,6 @@
 import Foundation
 
 enum GameMode {
-    case liarGame
-    case randomMusicQuiz
+  case liarGame
+  case randomMusicQuiz
 }

@@ -5,28 +5,28 @@
 //  Created by JK on 2022/04/26.
 //
 
-import Foundation
 import CoreGraphics
 import FlexLayout
+import Foundation
 
 extension Flex {
   @discardableResult
-      func horizontallySpacing(_ value: CGFloat?) -> Flex {
-          guard let view = view, view.subviews.count > 1 else { return self }
-          for (idx, subview) in view.subviews.enumerated() {
-              if idx == 0 { continue }
-              subview.flex.marginLeft(value ?? 0)
-          }
-          return self
-      }
-      
-      @discardableResult
-      func verticallySpacing(_ value: CGFloat?) -> Flex {
-          guard let view = view, view.subviews.count > 1 else { return self }
-          for (idx, subview) in view.subviews.enumerated() {
-              if idx == 0 { continue }
-              subview.flex.marginTop(value ?? 0)
-          }
-          return self
-      }
+  func horizontallySpacing(_ value: CGFloat?) -> Flex {
+    guard let view = view, view.subviews.count > 1 else { return self }
+    for (idx, subview) in view.subviews.enumerated() {
+      if idx == 0 { continue }
+      subview.flex.marginLeft(value ?? 0)
+    }
+    return self
+  }
+
+  @discardableResult
+  func verticallySpacing(_ value: CGFloat?) -> Flex {
+    guard let view = view, view.subviews.count > 1 else { return self }
+    for (idx, subview) in view.subviews.enumerated() {
+      if idx == 0 { continue }
+      subview.flex.marginTop(value ?? 0)
+    }
+    return self
+  }
 }

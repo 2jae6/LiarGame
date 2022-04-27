@@ -12,21 +12,21 @@ final class RandomMusicQuizReactor: Reactor {
   init(repository: RandomMusicRepository) {
     self.repository = repository
   }
-  
+
   private var disposeBag = DisposeBag()
-  
+
   var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
   var initialState = State()
   private let repository: RandomMusicRepository
   private var playerState: PlayerState = .unknwon
   private var second: PlaySecond?
-  
+
   enum PlaySecond: Int {
     case three = 3
     case five = 5
     case ten = 10
   }
-  
+
   enum PlayerState {
     /// 비디오 로드 후 대기 중
     case pending
@@ -40,7 +40,7 @@ final class RandomMusicQuizReactor: Reactor {
     case cued
     case unknwon
   }
-  
+
   enum Action {
     case updateMusicList
     case playMusicButtonTapped(second: PlaySecond)
@@ -50,7 +50,7 @@ final class RandomMusicQuizReactor: Reactor {
     case playerState(PlayerState)
     case needCurrentVersion
   }
-  
+
   enum Mutation {
     case updatePlayStopState(Bool)
     case updateCurrentVersion(String)
@@ -59,7 +59,7 @@ final class RandomMusicQuizReactor: Reactor {
     case updateLoading(Bool)
     case ignore
   }
-  
+
   struct State {
     var isPlaying: Bool = false
     var isLoading: Bool = false
@@ -67,7 +67,7 @@ final class RandomMusicQuizReactor: Reactor {
     var answer: (title: String, artist: String)?
     var currentMusic: Music?
   }
-  
+
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .updateMusicList:
@@ -81,22 +81,22 @@ final class RandomMusicQuizReactor: Reactor {
           .asObservable()
           .map { _ in Mutation.ignore },
         .just(.updateCurrentMusic(shuffleMusic())),
-        .just(.updateCurrentVersion(repository.currentVersion))
+        .just(.updateCurrentVersion(repository.currentVersion)),
       ])
       .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
-      
+
     case let .playMusicButtonTapped(second):
       self.second = second
       return .concat([
         .just(.updatePlayStopState(true)),
       ])
-      
+
     case .didPlayToggleButtonTapped:
       return .just(.updatePlayStopState(!currentState.isPlaying))
-      
+
     case .didAnswerButtonTapped:
       return .just(.updateAnswer(currentAnswer()))
-      
+
     case .shuffle:
       guard playerState != .pending else { return .empty() }
       playerState = .pending
@@ -106,15 +106,15 @@ final class RandomMusicQuizReactor: Reactor {
         .just(.updateAnswer(nil)),
         .just(.updateCurrentMusic(shuffleMusic()))
       )
-      
+
     case .needCurrentVersion:
       return .just(.updateCurrentVersion(repository.currentVersion))
-      
+
     case let .playerState(state):
       return playerStateHandler(state)
     }
   }
-  
+
   func reduce(state: State, mutation: Mutation) -> State {
     var state = state
     switch mutation {
@@ -132,7 +132,7 @@ final class RandomMusicQuizReactor: Reactor {
     }
     return state
   }
-  
+
   private func currentAnswer() -> (title: String, artist: String)? {
     if let currentMusic = currentState.currentMusic {
       return (title: currentMusic.title, artist: currentMusic.artist)
@@ -140,28 +140,28 @@ final class RandomMusicQuizReactor: Reactor {
       return nil
     }
   }
-  
+
   private func shuffleMusic() -> Music? {
     guard repository.musicList.count > 0 else { return nil }
     let size = repository.musicList.count
-    let randomNumber: Int = Int(arc4random()) % size
-    
+    let randomNumber = Int(arc4random()) % size
+
     return repository.musicList[randomNumber]
   }
-  
+
   // `YTPlayerView.playVideo()` 호출 시점과 실제 재생 시점이 다름
   // `YTPlayerView` 의 state 를 확인해서 재생 타이머를 수행
   private func playerStateHandler(_ state: PlayerState) -> Observable<Mutation> {
-    self.playerState = state
+    playerState = state
     guard playerState != .pending else { return .empty() }
-    
+
     switch playerState {
     case .playing:
       return .just(.updatePlayStopState(false))
     case .ready:
       return .just(.updateLoading(false))
     case .cued:
-      self.second = nil
+      second = nil
       fallthrough
     default:
       return .empty()

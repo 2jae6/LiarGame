@@ -9,24 +9,24 @@ import UIKit
 
 final class DashedLineBorderdLabel: UILabel {
   @available(*, unavailable)
-  required init?(coder: NSCoder) { fatalError() }
+  required init?(coder _: NSCoder) { fatalError() }
   init(cornerRadius: CGFloat = 8.0, borderWidth: CGFloat = 1.0, borderColor: UIColor) {
     self.borderWidth = borderWidth
     self.borderColor = borderColor
     self.cornerRadius = cornerRadius
     super.init(frame: .zero)
-    self.layer.cornerRadius = cornerRadius
+    layer.cornerRadius = cornerRadius
   }
-  
+
   private let borderWidth: CGFloat
   private let borderColor: UIColor
   private let cornerRadius: CGFloat
-  
+
   var dashBorder: CAShapeLayer?
-  
+
   override func layoutSubviews() {
     super.layoutSubviews()
-    
+
     dashBorder?.removeFromSuperlayer()
     let dashBorder = CAShapeLayer()
     dashBorder.lineWidth = borderWidth
@@ -46,5 +46,4 @@ final class DashedLineBorderdLabel: UILabel {
     layer.addSublayer(dashBorder)
     self.dashBorder = dashBorder
   }
-  
 }
