@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum LiarGameSubject{
-    case animal
-    case exercise
-    case food
-    case electronicEquipment
-    case job
+enum LiarGameSubject {
+  case animal
+  case exercise
+  case food
+  case electronicEquipment
+  case job
 }

@@ -6,6 +6,10 @@ configFiles:
   Debug: xcconfig/Project-Debug.xcconfig
   Release: xcconfig/Project-Release.xcconfig
 
+options: 
+  indentWidth: 2  
+  tabWidth: 2  
+
 packages:
   Then:
     url: https://github.com/devxoul/Then
