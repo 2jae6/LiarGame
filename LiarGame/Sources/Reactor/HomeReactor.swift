@@ -7,31 +7,32 @@
 
 import Foundation
 import ReactorKit
-import RxCocoa
 import RxSwift
+import RxCocoa
 
-final class HomeReactor: Reactor {
-  enum Action {
+
+final class HomeReactor: Reactor{
+  enum Action{
     case updateMode(GameMode)
   }
-
-  enum Mutation {
+  
+  enum Mutation{
     case setMode(GameMode)
   }
-
-  struct State {
+  
+  struct State{
     var mode: GameMode?
   }
-
+  
   let initialState = State()
-
+  
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case let .updateMode(mode):
       return Observable.just(Mutation.setMode(mode))
     }
   }
-
+  
   func reduce(state: State, mutation: Mutation) -> State {
     switch mutation {
     case let .setMode(mode):
