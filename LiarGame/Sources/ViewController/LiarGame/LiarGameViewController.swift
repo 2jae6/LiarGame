@@ -137,31 +137,17 @@ extension LiarGameViewController{
 extension LiarGameViewController{
     func bind(reactor: LiarGameReactor){
         curtainButton.rx.tap
-            .subscribe(onNext:{
-                reactor.action.onNext(.tappedCurtain)
+            .subscribe(onNext:{ [weak self] _ in
+              guard let self = self else { return }
+              self.changeView(currentView: self.curtainView, newView: self.liarView)
             }).disposed(by: disposeBag)
         
         liarButton.rx.tap
-            .subscribe(onNext:{
-                reactor.action.onNext(.tappedLiar)
+            .subscribe(onNext:{[weak self] _ in
+              guard let self = self else { return }
+              self.changeView(currentView: self.liarView, newView: self.curtainView)
             }).disposed(by: disposeBag)
         
-           
-        reactor.state.map { $0.curtainTapped }
-        .compactMap { $0 }
-        .observe(on: MainScheduler.instance)
-        .subscribe(onNext:{ [weak self] _ in
-            guard let self = self else { return }
-            self.changeView(currentView: self.curtainView, newView: self.liarView)
-        }).disposed(by: disposeBag)
-        
-        reactor.state.map { $0.liarTapped }
-        .compactMap { $0 }
-        .observe(on: MainScheduler.instance)
-        .subscribe(onNext: {[weak self] _ in
-            guard let self = self else { return }
-            self.changeView(currentView: self.liarView, newView: self.curtainView)
-        }).disposed(by: disposeBag)
  
     }
 
