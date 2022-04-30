@@ -79,9 +79,12 @@ final class RandomMusicQuizReactor: Reactor {
         .just(.updateAnswer(nil)),
         repository.getNewestVersion()
           .asObservable()
-          .map { _ in Mutation.ignore },
-        .just(.updateCurrentVersion(repository.currentVersion)),
-        shuffleMusic()
+          .flatMap { (list, version) -> Observable<Mutation> in
+            return .concat([
+              .just(.updateCurrentVersion(version)),
+              self.shuffleMusic(musicList: list)
+            ])
+          }
       ])
       .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
 
@@ -141,7 +144,13 @@ final class RandomMusicQuizReactor: Reactor {
     }
   }
 
-  private func shuffleMusic() -> Observable<Mutation> {
+  private func shuffleMusic(musicList: [Music]? = nil) -> Observable<Mutation> {
+    if let musicList = musicList {
+      let size = musicList.count
+      let randomNumber = Int(arc4random()) % size
+      return .just(Mutation.updateCurrentMusic(musicList[randomNumber]))
+    }
+    
     guard repository.musicList.count > 0 else {
       self.playerState = .unknwon
       return .just(.updateLoading(false))
