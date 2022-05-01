@@ -39,6 +39,7 @@ final class LiarGameViewController: UIViewController, View{
   private var selectSubject: LiarGameSubject // 주제
   private var mode: LiarGameMode // 게임 모드
   private var memberCount: Int
+  private var turn: Int = 0
   
   var disposeBag: DisposeBag = DisposeBag()
   private let flexContainer: UIView = UIView()
@@ -58,6 +59,7 @@ final class LiarGameViewController: UIViewController, View{
   private let endView: UIView = UIView()
   private let endLabel: UILabel = UILabel()
   private let endButton: UIButton = UIButton()
+
   
   
 }
@@ -102,6 +104,26 @@ extension LiarGameViewController{
     }
     curtainView.bringSubviewToFront(curtainLabel)
     
+    self.view.addSubview(self.endView)
+    self.endView.addSubview(self.endLabel)
+    self.endView.addSubview(self.endButton)
+    
+    self.endView.pin.width(300).height(300).center()
+    self.endLabel.pin.width(200).height(40).center()
+    self.endButton.pin.all()
+    
+    endView.do{
+      $0.isHidden = true
+    }
+    endLabel.do{
+      $0.backgroundColor = .blue
+      $0.text = "게임을 다시 시작하려면 아래 버튼을 눌러주세요."
+      $0.font = .systemFont(ofSize: 14, weight: .semibold)
+    }
+    endButton.do{
+      $0.backgroundColor = .red
+    }
+    endView.bringSubviewToFront(endLabel)
   
     
   }
@@ -128,7 +150,7 @@ extension LiarGameViewController{
 // MARK: - Bind
 extension LiarGameViewController{
   func bind(reactor: LiarGameReactor){
-    reactor.action.onNext(.initWord)
+    reactor.action.onNext(.initWord(self.memberCount, self.selectSubject, self.mode))
     
     reactor.state.map { $0.liarSetText }
     .observe(on: MainScheduler.instance)
@@ -136,6 +158,7 @@ extension LiarGameViewController{
     .bind(to: self.liarLabel.rx.text)
     .disposed(by: disposeBag)
     
+    // 가림막
     curtainButton.rx.tap
       .observe(on: MainScheduler.instance)
       .subscribe(onNext:{ [weak self] _ in
@@ -161,16 +184,31 @@ extension LiarGameViewController{
         
       }).disposed(by: disposeBag)
     
+    // 라이어
     liarButton.rx.tap
       .observe(on: MainScheduler.instance)
       .subscribe(onNext:{[weak self] _ in
         guard let self = self else { return }
         
+        if self.turn == self.memberCount - 1{
+          print("게임이 종료되었습니다.")
+          self.endView.isHidden = false
+          self.curtainView.isHidden = true
+          self.liarView.isHidden = true
+          return
+        }else{
+          self.turn += 1
+        }
+        
         let alert = UIAlertController(title: "확인하셨나요?", message: "확인버튼을 누르고 다음 차례로 넘겨주세요!", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "확인", style: .default) { (action) in
+          
+          
+          
           self.changeView(currentView: self.liarView, newView: self.curtainView)
           
+          reactor.action.onNext(.tappedLiar)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel){_ in
           

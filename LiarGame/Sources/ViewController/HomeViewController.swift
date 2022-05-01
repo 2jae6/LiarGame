@@ -85,12 +85,12 @@ extension HomeViewController {
         case .liarGame:
           let liarVC = LiarGameModeViewController(reactor: LiarGameModeReactor())
           liarVC.modalPresentationStyle = .fullScreen
-          self.present(liarVC, animated: true)
+          self.navigationController?.pushViewController(liarVC, animated: true)
         case .randomMusicQuiz:
           let reactor = RandomMusicQuizReactor(repository: RandomMusicRepository())
           let vc = RandomMusicQuizViewController(reactor: reactor)
           vc.modalPresentationStyle = .fullScreen
-          self.present(vc, animated: true)
+          self.navigationController?.pushViewController(vc, animated: true)
         }
       })
       .disposed(by: disposeBag)

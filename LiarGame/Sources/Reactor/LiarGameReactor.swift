@@ -13,13 +13,13 @@ import ReactorKit
 final class LiarGameReactor: Reactor{
   
   enum Action{
-    case initWord
+    case initWord(Int, LiarGameSubject, LiarGameMode)
     case tappedCurtain
     case tappedLiar
   }
   
   enum Mutation{
-    case initWord
+    case setWord
     case setCurtain(Bool)
     case setLiar(Bool)
     case setLiarText(String)
@@ -36,24 +36,23 @@ final class LiarGameReactor: Reactor{
   var turn: Int = 0
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
-    case .initWord:
-      self.setupLiarWord(memberCount: 3, subject: .job)
-      return Observable.just(.initWord)
+    case let .initWord(memberCount, selectSubject, mode):
+      self.setupLiarWord(memberCount: memberCount, subject: selectSubject, mode: mode)
+      return Observable.just(.setWord)
       
     case .tappedCurtain:
-      self.turn += 1
+      return Observable.just(Mutation.setLiarText(self.gameData[self.turn].word))
       
-      return Observable.just(Mutation.setLiarText(self.gameData[turn].word))
-                             
     case .tappedLiar:
-      return Observable.just(Mutation.setLiarText("돼지"))
+      self.turn += 1
+      return Observable.just(Mutation.setLiar(true))
     }
   }
   
   
   func reduce(state: State, mutation: Mutation) -> State {
     switch mutation {
-    case .initWord:
+    case .setWord:
       return state
     case let .setCurtain(tapped):
       var newState = state
@@ -74,20 +73,19 @@ final class LiarGameReactor: Reactor{
 }
 extension LiarGameReactor{
   
-  private func setupLiarWord(memberCount: Int, subject: LiarGameSubject){
+  private func setupLiarWord(memberCount: Int, subject: LiarGameSubject, mode: LiarGameMode){
     let wordList = LiarGameList()
     let randomNumber = Int(arc4random()) % wordList.list.count
     let selectedWord = wordList.list[randomNumber]
     
-    for i in 0 ..< 3{
+    for _ in 0 ..< memberCount - 1{
       self.gameData.append(selectedWord)
     }
     
-    print(selectedWord)
+    let insertRandomNumber = Int(arc4random()) % memberCount
+    self.gameData.insert((LiarGameModel(word: "라이어입니다.", subject: .job)), at: insertRandomNumber)
   }
-  
-  private func shuffleWord(){
-    let randomNumber = Int(arc4random())
-  }
+
+
   
 }
