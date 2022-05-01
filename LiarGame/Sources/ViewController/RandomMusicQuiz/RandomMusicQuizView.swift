@@ -75,8 +75,7 @@ final class RandomQuizView: UIView {
     [threeSecondButton, fiveSecondButton, tenSecondButton]
       .forEach { $0.isEnabled = !isPlaying }
     playButton.setTitle(isPlaying ? "정지" : "시작", for: .normal)
-    if isPlaying { ytPlayer.playVideo() }
-    else { ytPlayer.stopVideo()
+    if isPlaying { ytPlayer.playVideo() } else { ytPlayer.stopVideo()
     }
   }
 

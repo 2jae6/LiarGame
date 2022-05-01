@@ -27,14 +27,14 @@ final class LiarGameSubjectReactor: Reactor {
 
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
-    case let .selectSubject(subject):
+    case .selectSubject(let subject):
       return Observable.just(Mutation.setSubject(subject))
     }
   }
 
   func reduce(state: State, mutation: Mutation) -> State {
     switch mutation {
-    case let .setSubject(subject):
+    case .setSubject(let subject):
       var newState = state
       newState.selectedSubject = subject
       return newState

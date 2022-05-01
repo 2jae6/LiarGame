@@ -7,17 +7,16 @@
 
 import Foundation
 
-struct LiarGameModel{
+struct LiarGameModel {
   let word: String
   let subject: LiarGameSubject
 }
 
+struct LiarGameList {
 
-struct LiarGameList{
-  
   let list: [LiarGameModel] = [
     LiarGameModel(word: "개발자", subject: .job),
     LiarGameModel(word: "디자이너", subject: .job)
   ]
-  
+
 }

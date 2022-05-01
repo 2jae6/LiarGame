@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-final class HomeViewController: UIViewController, View{
+final class HomeViewController: UIViewController, View {
   typealias Reactor = HomeReactor
 
   init(reactor: HomeReactor) {
@@ -104,6 +104,5 @@ private func makeGameButton(str: String) -> UIButton {
   button.setTitleColor(.white, for: .normal)
   button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
 
-  
   return button
 }
