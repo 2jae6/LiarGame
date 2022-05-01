@@ -79,9 +79,12 @@ final class RandomMusicQuizReactor: Reactor {
         .just(.updateAnswer(nil)),
         repository.getNewestVersion()
           .asObservable()
-          .map { _ in Mutation.ignore },
-        .just(.updateCurrentMusic(shuffleMusic())),
-        .just(.updateCurrentVersion(repository.currentVersion)),
+          .flatMap { (list, version) -> Observable<Mutation> in
+            return .concat([
+              .just(.updateCurrentVersion(version)),
+              self.shuffleMusic(musicList: list)
+            ])
+          }
       ])
       .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
 
@@ -104,7 +107,7 @@ final class RandomMusicQuizReactor: Reactor {
         .just(.updateLoading(true)),
         .just(.updatePlayStopState(false)),
         .just(.updateAnswer(nil)),
-        .just(.updateCurrentMusic(shuffleMusic()))
+        shuffleMusic()
       )
 
     case .needCurrentVersion:
@@ -141,12 +144,22 @@ final class RandomMusicQuizReactor: Reactor {
     }
   }
 
-  private func shuffleMusic() -> Music? {
-    guard repository.musicList.count > 0 else { return nil }
+  private func shuffleMusic(musicList: [Music]? = nil) -> Observable<Mutation> {
+    if let musicList = musicList {
+      let size = musicList.count
+      let randomNumber = Int(arc4random()) % size
+      return .just(Mutation.updateCurrentMusic(musicList[randomNumber]))
+    }
+    
+    guard repository.musicList.count > 0 else {
+      self.playerState = .unknwon
+      return .just(.updateLoading(false))
+    }
+    
     let size = repository.musicList.count
     let randomNumber = Int(arc4random()) % size
 
-    return repository.musicList[randomNumber]
+    return .just(.updateCurrentMusic(repository.musicList[randomNumber]))
   }
 
   // `YTPlayerView.playVideo()` 호출 시점과 실제 재생 시점이 다름

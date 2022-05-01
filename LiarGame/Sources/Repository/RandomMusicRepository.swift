@@ -14,7 +14,7 @@ protocol RandomMusicRepositoryType {
   /// 현재 저장되어 있는 버전을 확인합니다.
   var currentVersion: String { get }
   /// 버전 업데이트를 수행합니다.
-  func getNewestVersion() -> Single<[Music]>
+  func getNewestVersion() -> Single<(list: [Music], version: String)>
   /// 저장되어있는 음악 리스트를 가져옵니다.
   var musicList: [Music] { get }
 }
@@ -56,20 +56,20 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
   }
 
   /// 버전 확인 후 최신 버전을 가져옵니다.
-  func getNewestVersion() -> Single<[Music]> {
+  func getNewestVersion() -> Single<(list: [Music], version: String)> {
     _newsetVersion
-      .flatMap { _version -> Single<[Music]> in
+      .flatMap { _version -> Single<(list: [Music], version: String)> in
         let arr = _version.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: ",")
         let version = arr[0]
         let length = arr[1]
-        guard version != self.currentVersion else { return .just(try self.readMuicList()) }
+        guard version != self.currentVersion else { return .just((list: try self.readMuicList(), version: version)) }
 
         return self.update(version: version, length: length)
       }
   }
 
   /// 최신 목록으로 업데이트를 수행합니다.
-  private func update(version: String, length: String) -> Single<[Music]> {
+  private func update(version: String, length: String) -> Single<(list: [Music], version: String)> {
     guard let url = URL(string: "https://sheets.googleapis.com/v4/spreadsheets/\(sheetID)/values/Sheet!A2:D\(length)?key=\(googleAPIKey)") else {
       assertionFailure("URL String error")
       return .error(RandomMusicRepositoryError.castingError)
@@ -93,9 +93,9 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
         }
       }
       .map(\.values)
-      .map { $0.compactMap(Music.init) }
+      .map { (list: $0.compactMap(Music.init), version: version) }
       // 저장
-      .do(onSuccess: { musicList in
+      .do(onSuccess: { (musicList, version) in
         self.setCurrent(version: version)
         try self.writeMusicList(from: musicList)
       })

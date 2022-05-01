@@ -127,6 +127,7 @@ final class RandomMusicQuizViewController: UIViewController, View {
 
     reactor.state.map(\.isLoading)
       .distinctUntilChanged()
+      .observe(on: MainScheduler.instance)
       .subscribe(onNext: content.setLoading(_:))
       .disposed(by: disposeBag)
 
