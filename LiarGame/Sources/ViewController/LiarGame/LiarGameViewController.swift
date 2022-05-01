@@ -21,8 +21,6 @@ final class LiarGameViewController: UIViewController, View{
     self.mode = mode
     super.init(nibName: nil, bundle: nil)
     self.reactor = reactor
-    
-    
   }
   
   @available(*, unavailable)
@@ -67,6 +65,25 @@ final class LiarGameViewController: UIViewController, View{
 extension LiarGameViewController{
   
   private func setupView(){
+    self.view.addSubview(self.liarView)
+    self.liarView.addSubview(self.liarLabel)
+    self.liarView.addSubview(self.liarButton)
+    
+    self.liarView.pin.width(300).height(300).center()
+    self.liarLabel.pin.width(200).height(40).center()
+    self.liarButton.pin.all()
+    
+    liarLabel.do{
+      $0.backgroundColor = .red
+      $0.text = "라이어 게임 테스트"
+      $0.font = .systemFont(ofSize: 14, weight: .semibold)
+    }
+    
+    liarButton.do{
+      $0.backgroundColor = .green
+    }
+    liarView.bringSubviewToFront(liarLabel)
+    
     self.view.addSubview(self.curtainView)
     self.curtainView.addSubview(self.curtainLabel)
     self.curtainView.addSubview(self.curtainButton)
@@ -83,25 +100,9 @@ extension LiarGameViewController{
     curtainButton.do{
       $0.backgroundColor = .red
     }
+    curtainView.bringSubviewToFront(curtainLabel)
     
-    
-    self.view.addSubview(self.liarView)
-    self.liarView.addSubview(self.liarLabel)
-    self.liarView.addSubview(self.liarButton)
-    
-    self.liarView.pin.width(300).height(300).center()
-    self.liarLabel.pin.width(200).height(40).center()
-    self.liarButton.pin.all()
-    
-    liarLabel.do{
-      $0.backgroundColor = .red
-      $0.text = "임시 텍스트"
-      $0.font = .systemFont(ofSize: 14, weight: .semibold)
-    }
-    
-    liarButton.do{
-      $0.backgroundColor = .green
-    }
+  
     
   }
   
@@ -127,6 +128,14 @@ extension LiarGameViewController{
 // MARK: - Bind
 extension LiarGameViewController{
   func bind(reactor: LiarGameReactor){
+    reactor.action.onNext(.initWord)
+    
+    reactor.state.map { $0.liarSetText }
+    .observe(on: MainScheduler.instance)
+    .distinctUntilChanged()
+    .bind(to: self.liarLabel.rx.text)
+    .disposed(by: disposeBag)
+    
     curtainButton.rx.tap
       .observe(on: MainScheduler.instance)
       .subscribe(onNext:{ [weak self] _ in
@@ -135,8 +144,7 @@ extension LiarGameViewController{
         let alert = UIAlertController(title: "보기", message: "본인의 차례가 맞다면 보기를 눌러주세요", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "보기", style: .default) { (action) in
-          
-          
+          reactor.action.onNext(.tappedCurtain)
           self.changeView(currentView: self.curtainView, newView: self.liarView)
           
         }
@@ -161,8 +169,6 @@ extension LiarGameViewController{
         let alert = UIAlertController(title: "확인하셨나요?", message: "확인버튼을 누르고 다음 차례로 넘겨주세요!", preferredStyle: .alert)
         
         let okAction = UIAlertAction(title: "확인", style: .default) { (action) in
-          
-          print("gg")
           self.changeView(currentView: self.liarView, newView: self.curtainView)
           
         }
