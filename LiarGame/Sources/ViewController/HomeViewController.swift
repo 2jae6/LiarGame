@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-final class HomeViewController: UIViewController, View {
+final class HomeViewController: UIViewController, View{
   typealias Reactor = HomeReactor
 
   init(reactor: HomeReactor) {
@@ -32,7 +32,7 @@ final class HomeViewController: UIViewController, View {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = .systemPink
+    view.backgroundColor = UIColor(hexString: "EDE6DB")
   }
 
   private let flexLayoutContainer: UIView = .init()
@@ -54,7 +54,7 @@ extension HomeViewController {
         flex.addItem($0)
           .width(200)
           .height(50)
-          .backgroundColor(.yellow)
+          .backgroundColor(UIColor(hexString: "417D7A"))
       }
     }
     .verticallySpacing(15)
@@ -101,8 +101,9 @@ private func makeGameButton(str: String) -> UIButton {
   let button = UIButton()
 
   button.setTitle(str, for: .normal)
-  button.setTitleColor(.black, for: .normal)
-  button.setTitleColor(.systemGray, for: .normal)
+  button.setTitleColor(.white, for: .normal)
+  button.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
 
+  
   return button
 }

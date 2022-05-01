@@ -32,7 +32,7 @@ final class LiarGameViewController: UIViewController, View{
     
   }
   override func viewDidLoad() {
-    self.view.backgroundColor = .white
+    self.view.backgroundColor = UIColor(hexString: "EDE6DB")
     self.setupView()
     
   }
@@ -125,7 +125,6 @@ extension LiarGameViewController{
     }
     endView.bringSubviewToFront(endLabel)
   
-    
   }
   
   private func changeView(currentView:UIView, newView:UIView) {
