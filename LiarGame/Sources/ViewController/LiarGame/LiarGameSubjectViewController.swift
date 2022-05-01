@@ -125,8 +125,7 @@ extension LiarGameSubjectViewController{
     .subscribe(onNext:{ `self`, subject in
       let liarGameVC = LiarGameViewController(reactor: LiarGameReactor(), subject: subject, mode: self.mode, memberCount: self.memberCount)
       liarGameVC.modalPresentationStyle = .fullScreen
-      self.present(liarGameVC, animated: true, completion: nil)
-      
+      self.navigationController?.pushViewController(liarGameVC, animated: true)
     }).disposed(by: disposeBag)
     
   }
