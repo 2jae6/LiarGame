@@ -120,7 +120,7 @@ final class RandomMusicQuizViewController: UIViewController, View {
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] in
         self?.content.ytPlayer.load(withVideoId: $0.id, playerVars: [
-          "start": $0.startedAt,
+          "start": $0.startedAt
         ])
       })
       .disposed(by: disposeBag)

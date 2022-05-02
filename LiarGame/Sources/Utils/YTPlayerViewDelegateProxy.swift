@@ -10,10 +10,8 @@ import RxCocoa
 import RxSwift
 import YouTubeiOSPlayerHelper
 
-final class RxYTPlayerDelegateProxy:
-  DelegateProxy<YTPlayerView, YTPlayerViewDelegate>,
-  DelegateProxyType, YTPlayerViewDelegate
-{
+final class RxYTPlayerDelegateProxy: DelegateProxy<YTPlayerView, YTPlayerViewDelegate>,
+  DelegateProxyType, YTPlayerViewDelegate {
   public private(set) weak var ytPlayer: YTPlayerView?
 
   init(ytPlayer: YTPlayerView) {

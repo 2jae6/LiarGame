@@ -60,3 +60,8 @@ targets:
       - package: FlexLayout
       - package: Lottie
       - framework: frameworks/YouTubeiOSPlayerHelper.xcframework
+    preBuildScripts:
+      - path: scripts/swiftformat.sh
+        name: Swift Format
+      - path: scripts/swiftlint.sh
+        name: Swift Lint

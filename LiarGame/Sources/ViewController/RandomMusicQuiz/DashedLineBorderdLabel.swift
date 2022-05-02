@@ -40,8 +40,7 @@ final class DashedLineBorderdLabel: UILabel {
       x: bounds.origin.x - horizontalInset,
       y: bounds.origin.y - verticalInset,
       width: bounds.width + horizontalInset * 2,
-      height: bounds.height + verticalInset * 2
-    )
+      height: bounds.height + verticalInset * 2)
     dashBorder.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
     layer.addSublayer(dashBorder)
     self.dashBorder = dashBorder
