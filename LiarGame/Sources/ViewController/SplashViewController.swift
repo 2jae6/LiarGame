@@ -43,8 +43,8 @@ final class SplashViewController: UIViewController {
   
   
 
-  override func viewDidAppear(_: Bool) {
-    
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
     self.titleImageView.image = UIImage(named: "launch_title")
     animationView.play(){ _ in
       let homeVC = UINavigationController(rootViewController: HomeViewController(reactor: HomeReactor()))
