@@ -61,9 +61,9 @@ final class RandomMusicQuizReactor: Reactor {
   }
 
   struct State {
-    var isPlaying: Bool = false
-    var isLoading: Bool = false
-    var currentVersion: String = ""
+    var isPlaying = false
+    var isLoading = false
+    var currentVersion = ""
     var answer: (title: String, artist: String)?
     var currentMusic: Music?
   }
@@ -79,8 +79,8 @@ final class RandomMusicQuizReactor: Reactor {
         .just(.updateAnswer(nil)),
         repository.getNewestVersion()
           .asObservable()
-          .flatMap { (list, version) -> Observable<Mutation> in
-            return .concat([
+          .flatMap { list, version -> Observable<Mutation> in
+            .concat([
               .just(.updateCurrentVersion(version)),
               self.shuffleMusic(musicList: list)
             ])
@@ -88,10 +88,10 @@ final class RandomMusicQuizReactor: Reactor {
       ])
       .timeout(.seconds(10), other: Observable.just(Mutation.updateLoading(false)), scheduler: scheduler)
 
-    case let .playMusicButtonTapped(second):
+    case .playMusicButtonTapped(let second):
       self.second = second
       return .concat([
-        .just(.updatePlayStopState(true)),
+        .just(.updatePlayStopState(true))
       ])
 
     case .didPlayToggleButtonTapped:
@@ -107,13 +107,12 @@ final class RandomMusicQuizReactor: Reactor {
         .just(.updateLoading(true)),
         .just(.updatePlayStopState(false)),
         .just(.updateAnswer(nil)),
-        shuffleMusic()
-      )
+        shuffleMusic())
 
     case .needCurrentVersion:
       return .just(.updateCurrentVersion(repository.currentVersion))
 
-    case let .playerState(state):
+    case .playerState(let state):
       return playerStateHandler(state)
     }
   }
@@ -121,15 +120,15 @@ final class RandomMusicQuizReactor: Reactor {
   func reduce(state: State, mutation: Mutation) -> State {
     var state = state
     switch mutation {
-    case let .updatePlayStopState(boolean):
+    case .updatePlayStopState(let boolean):
       state.isPlaying = boolean
-    case let .updateCurrentVersion(version):
+    case .updateCurrentVersion(let version):
       state.currentVersion = version
-    case let .updateCurrentMusic(music):
+    case .updateCurrentMusic(let music):
       state.currentMusic = music
-    case let .updateAnswer(info):
+    case .updateAnswer(let info):
       state.answer = info
-    case let .updateLoading(boolean):
+    case .updateLoading(let boolean):
       state.isLoading = boolean
     case .ignore: break
     }
@@ -150,12 +149,12 @@ final class RandomMusicQuizReactor: Reactor {
       let randomNumber = Int(arc4random()) % size
       return .just(Mutation.updateCurrentMusic(musicList[randomNumber]))
     }
-    
+
     guard repository.musicList.count > 0 else {
-      self.playerState = .unknwon
+      playerState = .unknwon
       return .just(.updateLoading(false))
     }
-    
+
     let size = repository.musicList.count
     let randomNumber = Int(arc4random()) % size
 

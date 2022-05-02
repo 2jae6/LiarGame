@@ -21,7 +21,7 @@ protocol RandomMusicRepositoryType {
 
 final class RandomMusicRepository: RandomMusicRepositoryType {
   /// 리스트를 담고 있는 Google Sheet ID
-  private var sheetID: String = "1jiAcDhKOoMbfLmlCOba33CMAZCwlpaV3enkLVvjMmIA"
+  private var sheetID = "1jiAcDhKOoMbfLmlCOba33CMAZCwlpaV3enkLVvjMmIA"
   private var googleAPIKey: String {
     (Bundle.main.object(forInfoDictionaryKey: "GOOGLE_APIKEY") as? String) ?? ""
   }
@@ -34,10 +34,9 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
   @UserDefault(key: "RandomMusicVersion", defaultValue: "unknwon")
   private static var _currentVersion: String
 
-  /** 저장되어있는 음악 목록을 가져옵니다.
-
-   최신 버전을 보증하지 않음.
-   */
+  /// 저장되어있는 음악 목록을 가져옵니다.
+  ///
+  /// 최신 버전을 보증하지 않음.
   var musicList: [Music] {
     do {
       return try readMuicList()
@@ -70,7 +69,10 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
 
   /// 최신 목록으로 업데이트를 수행합니다.
   private func update(version: String, length: String) -> Single<(list: [Music], version: String)> {
-    guard let url = URL(string: "https://sheets.googleapis.com/v4/spreadsheets/\(sheetID)/values/Sheet!A2:D\(length)?key=\(googleAPIKey)") else {
+    guard
+      let url =
+      URL(string: "https://sheets.googleapis.com/v4/spreadsheets/\(sheetID)/values/Sheet!A2:D\(length)?key=\(googleAPIKey)")
+    else {
       assertionFailure("URL String error")
       return .error(RandomMusicRepositoryError.castingError)
     }
@@ -95,20 +97,19 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
       .map(\.values)
       .map { (list: $0.compactMap(Music.init), version: version) }
       // 저장
-      .do(onSuccess: { (musicList, version) in
+      .do(onSuccess: { musicList, version in
         self.setCurrent(version: version)
         try self.writeMusicList(from: musicList)
       })
   }
 
-  /** 최신 정보를 받아옵니다.
-
-   return 값인 String 의 구조는 다음과 같습니다.
-
-   [업데이트된버전],[시트의 마지막행]
-
-   ex) 20220422,5
-   */
+  /// 최신 정보를 받아옵니다.
+  ///
+  /// return 값인 String 의 구조는 다음과 같습니다.
+  ///
+  /// [업데이트된버전],[시트의 마지막행]
+  ///
+  /// ex) 20220422,5
   private var _newsetVersion: Single<String> {
     guard let url = URL(string: "https://dl.dropboxusercontent.com/s/g55fwxp70a16xl1/version.txt") else {
       assertionFailure("URL String error")
