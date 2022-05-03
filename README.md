@@ -1,12 +1,4 @@
 
-<div align="center">
-
-![Swift](https://img.shields.io/badge/swift-v5.5-orange?logo=swift)
-![Xcode](https://img.shields.io/badge/xcode-v13.2-blue?logo=xcode)
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
-</div>
 
 # Developer
 | 🍎 iOS   | 🍏 iOS |
@@ -29,3 +21,12 @@ Liar Game은 라이어 게임뿐만 랜덤 노래 맞추기 게임도 함께 개
 - RxCocoa
 - RxRelay
 - Then
+
+<div align="center">
+
+![Swift](https://img.shields.io/badge/swift-v5.5-orange?logo=swift)
+![Xcode](https://img.shields.io/badge/xcode-v13.2-blue?logo=xcode)
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
+</div>
