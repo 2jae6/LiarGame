@@ -10,7 +10,7 @@
 
 # LiarGame
 Liar Game & Random Play Music 함께 개발이 병행됩니다.
-Github-Flow 로 개발하며 https://github.com/2jae6/LiarGame/pulls?q=is%3Apr+is%3Aclosed 에서 어떻게 코드리뷰하는지 알 수 있습니다.
+Github-Flow 로 개발하며 <br> https://github.com/2jae6/LiarGame/pulls?q=is%3Apr+is%3Aclosed <br> 에서 어떻게 코드리뷰하는지 알 수 있습니다.
 
 
 ## Skill Stack
