@@ -23,7 +23,6 @@ final class LiarGameViewController: UIViewController, View {
   private var turn = 0
   var disposeBag = DisposeBag()
 
-
   // MARK: UI
 
   private let flexContainer = UIView()
@@ -35,6 +34,7 @@ final class LiarGameViewController: UIViewController, View {
     $0.text = "터치해서 가림막을 제거해주세요"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
   }
+
   private let curtainButton = UIButton().then {
     $0.backgroundColor = .red
   }
@@ -46,6 +46,7 @@ final class LiarGameViewController: UIViewController, View {
     $0.text = "라이어 게임 테스트"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
   }
+
   private let liarButton = UIButton().then {
     $0.backgroundColor = .green
   }
@@ -54,15 +55,16 @@ final class LiarGameViewController: UIViewController, View {
   private let endView = UIView().then {
     $0.isHidden = true
   }
+
   private let endLabel = UILabel().then {
     $0.backgroundColor = .blue
     $0.text = "게임을 다시 시작하려면 아래 버튼을 눌러주세요."
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
   }
+
   private let endButton = UIButton().then {
     $0.backgroundColor = .red
   }
-
 
   // MARK: Initialize
 
@@ -80,7 +82,6 @@ final class LiarGameViewController: UIViewController, View {
     fatalError("init(coder:) has not been implemented")
   }
 
-
   // MARK: View Lifecycle
 
   override func viewDidLoad() {
@@ -94,7 +95,6 @@ final class LiarGameViewController: UIViewController, View {
     self.setupEndView()
   }
 
-
   // MARK: Binding
 
   func bind(reactor: LiarGameReactor) {
@@ -104,7 +104,6 @@ final class LiarGameViewController: UIViewController, View {
     self.bindCurtainButton(with: reactor)
     self.bindLiarButton(with: reactor)
   }
-
 
   // MARK: View Handling
 
@@ -123,10 +122,8 @@ final class LiarGameViewController: UIViewController, View {
       animations: {
         newView.alpha = 1.0
         oldView.alpha = 0.0
-      }
-    )
+      })
   }
-
 
   // MARK: Layout
 
@@ -157,7 +154,6 @@ final class LiarGameViewController: UIViewController, View {
   }
 }
 
-
 // MARK: - Setup
 
 extension LiarGameViewController {
@@ -179,7 +175,6 @@ extension LiarGameViewController {
     self.endView.addSubview(endLabel)
   }
 }
-
 
 // MARK: - Bind
 
@@ -209,15 +204,13 @@ extension LiarGameViewController {
     let alert = UIAlertController(
       title: "보기",
       message: "본인의 차례가 맞다면 보기를 눌러주세요",
-      preferredStyle: .alert
-    )
+      preferredStyle: .alert)
 
     let okAction = UIAlertAction(
       title: "보기",
-      style: .default
-    ) { _ in
-      okButtonHandler?()
-    }
+      style: .default) { _ in
+        okButtonHandler?()
+      }
     let cancelAction = UIAlertAction(title: "취소", style: .cancel)
     alert.addAction(okAction)
     alert.addAction(cancelAction)
@@ -253,14 +246,12 @@ extension LiarGameViewController {
     let alert = UIAlertController(
       title: "확인하셨나요?",
       message: "확인버튼을 누르고 다음 차례로 넘겨주세요!",
-      preferredStyle: .alert
-    )
+      preferredStyle: .alert)
     let okAction = UIAlertAction(
       title: "확인",
-      style: .default
-    ) { _ in
-      okButtonHandler?()
-    }
+      style: .default) { _ in
+        okButtonHandler?()
+      }
     let cancelAction = UIAlertAction(title: "취소", style: .cancel)
     alert.addAction(okAction)
     alert.addAction(cancelAction)
