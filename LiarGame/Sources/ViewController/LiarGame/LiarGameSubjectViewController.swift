@@ -12,11 +12,71 @@ import Then
 import UIKit
 
 final class LiarGameSubjectViewController: UIViewController, View {
+
+  // MARK: Properties
+
+  private var mode: LiarGameMode
+  private var memberCount = 3
+  var disposeBag = DisposeBag()
+
+  // MARK: UI
+
+  private let flexLayoutContainer = UIView()
+  private let animalButton = UIButton().then {
+    $0.backgroundColor = .yellow
+    $0.setTitle("동물", for: .normal)
+    $0.setTitleColor(.black, for: .normal)
+  }
+
+  private let exerciseButton = UIButton().then {
+    $0.backgroundColor = .yellow
+    $0.setTitle("운동", for: .normal)
+    $0.setTitleColor(.black, for: .normal)
+  }
+
+  private let foodButton = UIButton().then {
+    $0.backgroundColor = .yellow
+    $0.setTitle("음식", for: .normal)
+    $0.setTitleColor(.black, for: .normal)
+  }
+
+  private let electronicEquipmentButton = UIButton().then {
+    $0.backgroundColor = .yellow
+    $0.setTitle("전자기기", for: .normal)
+    $0.setTitleColor(.black, for: .normal)
+  }
+
+  private let jobButton = UIButton().then {
+    $0.backgroundColor = .yellow
+    $0.setTitle("직업", for: .normal)
+    $0.setTitleColor(.black, for: .normal)
+  }
+
+  // MARK: Initialize
+
   init(reactor: LiarGameSubjectReactor, mode: LiarGameMode, memberCount: Int) {
+    defer { self.reactor = reactor }
     self.mode = mode
     self.memberCount = memberCount
     super.init(nibName: nil, bundle: nil)
-    self.reactor = reactor
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) { fatalError() }
+
+  // MARK: View Lifecycle
+
+  override func viewDidLoad() {
+    view.backgroundColor = UIColor(hexString: "EDE6DB")
+  }
+
+  // MARK: Layout
+
+  override func viewDidLayoutSubviews() {
+    setLayout()
+  }
+
+  private func setLayout() {
     view.addSubview(flexLayoutContainer)
 
     flexLayoutContainer.flex.direction(.row).justifyContent(.center).alignItems(.stretch).wrap(.wrap).define { flex in
@@ -26,96 +86,50 @@ final class LiarGameSubjectViewController: UIViewController, View {
       flex.addItem(self.electronicEquipmentButton).width(100).height(25).marginTop(10).margin(10)
       flex.addItem(self.jobButton).width(100).height(25).marginTop(10).margin(10)
     }
-  }
 
-  @available(*, unavailable)
-  required init?(coder _: NSCoder) { fatalError() }
-
-  override func viewDidLayoutSubviews() {
     flexLayoutContainer.pin.all()
     flexLayoutContainer.flex.layout()
   }
 
-  override func viewDidLoad() {
-    view.backgroundColor = UIColor(hexString: "EDE6DB")
-    setupView()
-  }
-
-  var mode: LiarGameMode
-  var memberCount = 3
-  private let flexLayoutContainer = UIView()
-
-  var disposeBag = DisposeBag()
-
-  private let animalButton = UIButton()
-  private let exerciseButton = UIButton()
-  private let foodButton = UIButton()
-  private let electronicEquipmentButton = UIButton()
-  private let jobButton = UIButton()
-
-}
-
-extension LiarGameSubjectViewController {
-
-  func setupView() {
-    animalButton.do {
-      $0.backgroundColor = .yellow
-      $0.setTitle("동물", for: .normal)
-      $0.setTitleColor(.black, for: .normal)
-    }
-    exerciseButton.do {
-      $0.backgroundColor = .yellow
-      $0.setTitle("운동", for: .normal)
-      $0.setTitleColor(.black, for: .normal)
-    }
-    foodButton.do {
-      $0.backgroundColor = .yellow
-      $0.setTitle("음식", for: .normal)
-      $0.setTitleColor(.black, for: .normal)
-    }
-    electronicEquipmentButton.do {
-      $0.backgroundColor = .yellow
-      $0.setTitle("전자기기", for: .normal)
-      $0.setTitleColor(.black, for: .normal)
-    }
-    jobButton.do {
-      $0.backgroundColor = .yellow
-      $0.setTitle("직업", for: .normal)
-      $0.setTitleColor(.black, for: .normal)
-    }
-
-  }
-
-}
-
-extension LiarGameSubjectViewController {
+  // MARK: Bind
 
   func bind(reactor: LiarGameSubjectReactor) {
+    bindSubjectButtonTapped(with: reactor)
+    bindMoveToGame(with: reactor)
+  }
+}
+
+// MARK: - Binding Method
+
+extension LiarGameSubjectViewController {
+  private func bindSubjectButtonTapped(with reactor: LiarGameSubjectReactor) {
     animalButton.rx.tap
-      .subscribe(onNext: {
-        reactor.action.onNext(.selectSubject(.animal))
+      .subscribe(onNext: { [weak reactor] in
+        reactor?.action.onNext(.selectSubject(.animal))
       }).disposed(by: disposeBag)
 
     exerciseButton.rx.tap
-      .subscribe(onNext: {
-        reactor.action.onNext(.selectSubject(.exercise))
+      .subscribe(onNext: { [weak reactor] in
+        reactor?.action.onNext(.selectSubject(.exercise))
       }).disposed(by: disposeBag)
 
     foodButton.rx.tap
-      .subscribe(onNext: {
-        reactor.action.onNext(.selectSubject(.food))
+      .subscribe(onNext: { [weak reactor] in
+        reactor?.action.onNext(.selectSubject(.food))
       }).disposed(by: disposeBag)
 
     electronicEquipmentButton.rx.tap
-      .subscribe(onNext: {
-        reactor.action.onNext(.selectSubject(.electronicEquipment))
+      .subscribe(onNext: { [weak reactor] in
+        reactor?.action.onNext(.selectSubject(.electronicEquipment))
       }).disposed(by: disposeBag)
 
     jobButton.rx.tap.asDriver()
-      .drive(onNext: {
-        reactor.action.onNext(.selectSubject(.job))
+      .drive(onNext: { [weak reactor] in
+        reactor?.action.onNext(.selectSubject(.job))
       }).disposed(by: disposeBag)
+  }
 
+  private func bindMoveToGame(with reactor: LiarGameSubjectReactor) {
     reactor.state.map { $0.selectedSubject }
       .compactMap { $0 }
       .distinctUntilChanged()
@@ -129,6 +143,5 @@ extension LiarGameSubjectViewController {
         liarGameVC.modalPresentationStyle = .fullScreen
         self.navigationController?.pushViewController(liarGameVC, animated: true)
       }).disposed(by: disposeBag)
-
   }
 }
