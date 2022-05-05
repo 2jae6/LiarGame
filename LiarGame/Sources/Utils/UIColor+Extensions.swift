@@ -8,6 +8,13 @@
 import UIKit
 
 extension UIColor {
+  static let background = UIColor(hexString: "EDE6DB")
+  static let primaryColor = UIColor(hexString: "417D7A")
+  static let secondaryColor = UIColor(hexString: "1D5C63")
+  static let subColor = UIColor(hexString: "1A3C40")
+}
+
+extension UIColor {
   convenience init(hexString: String) {
     if let rgbValue = UInt(hexString, radix: 16) {
       let red = CGFloat((rgbValue >> 16) & 0xFF) / 255
@@ -19,3 +26,4 @@ extension UIColor {
     }
   }
 }
+
