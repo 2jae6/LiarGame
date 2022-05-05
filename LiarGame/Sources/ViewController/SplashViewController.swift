@@ -32,16 +32,16 @@ final class SplashViewController: UIViewController {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = UIColor(hexString: "EDE6DB")
+    view.backgroundColor = .background
     view.addSubview(flexContainer)
 
   }
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    
-    self.titleImageView.image = UIImage(named: "launch_title")
-    animationView.play(){ _ in
+
+    titleImageView.image = UIImage(named: "launch_title")
+    animationView.play { _ in
       let homeVC = UINavigationController(rootViewController: HomeViewController(reactor: HomeReactor()))
       homeVC.modalPresentationStyle = .fullScreen
       self.present(homeVC, animated: false, completion: nil)

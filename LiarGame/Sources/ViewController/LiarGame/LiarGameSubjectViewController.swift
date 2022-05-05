@@ -37,7 +37,7 @@ final class LiarGameSubjectViewController: UIViewController, View {
   }
 
   override func viewDidLoad() {
-    view.backgroundColor = UIColor(hexString: "EDE6DB")
+    view.backgroundColor = .background
     setupView()
   }
 

@@ -19,7 +19,7 @@ final class RandomQuizView: UIView {
   }
 
   fileprivate let container = UIView()
-  private let _tintColor = UIColor(hexString: "1D5C63")
+  private let _tintColor = UIColor.secondaryColor
 
   lazy var threeSecondButton = makeRoundedButton(tintColor: _tintColor, str: "3초")
   lazy var fiveSecondButton = makeRoundedButton(tintColor: _tintColor, str: "5초")
@@ -100,7 +100,7 @@ final class RandomQuizView: UIView {
   }
 
   private func setupViews() {
-    backgroundColor = UIColor(hexString: "EDE6DB")
+    backgroundColor = .background
     addSubview(container)
     container.addSubview(ytPlayer)
     ytPlayer.isHidden = true
