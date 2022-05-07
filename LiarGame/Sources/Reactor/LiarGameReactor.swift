@@ -73,7 +73,7 @@ final class LiarGameReactor: Reactor {
 
 extension LiarGameReactor {
 
-  private func setupLiarWord(memberCount: Int, subject: LiarGameSubject, mode _: LiarGameMode) {
+  private func setupLiarWord(memberCount: Int, subject: LiarGameSubject, mode: LiarGameMode) {
     var wordList = LiarGameList()
     wordList.list = wordList.list.filter { $0.subject == subject }
 
