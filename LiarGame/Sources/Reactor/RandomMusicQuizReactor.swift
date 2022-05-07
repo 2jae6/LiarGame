@@ -6,65 +6,27 @@
 //
 
 import Foundation
+
 import ReactorKit
 
 final class RandomMusicQuizReactor: Reactor {
+
+  // MARK: Properties
+
+  var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
+  var initialState = State()
+
+  private let repository: RandomMusicRepository
+  private var playerState: YoutubePlayerState = .unknwon
+  private var second: PlaySecond?
+
+  // MARK: Initialize
+
   init(repository: RandomMusicRepository) {
     self.repository = repository
   }
 
-  var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
-  var initialState = State()
-  private let repository: RandomMusicRepository
-  private var playerState: PlayerState = .unknwon
-  private var second: PlaySecond?
-
-  enum PlaySecond: Int {
-    case three = 3
-    case five = 5
-    case ten = 10
-  }
-
-  enum PlayerState {
-    /// 비디오 로드 후 대기 중
-    case pending
-    /// 비디오 로드 완료
-    case ready
-    /// 비디오 재생 시 버퍼링
-    case buffering
-    /// 비디오 재생 중
-    case playing
-    /// 재생정지(stopVideo) 호출 시 cued
-    case cued
-    case unknwon
-  }
-
-  enum Action {
-    case updateMusicList
-    case playMusicButtonTapped(second: PlaySecond)
-    case didPlayToggleButtonTapped
-    case didAnswerButtonTapped
-    case shuffle
-    case playerState(PlayerState)
-    case needCurrentVersion
-  }
-
-  enum Mutation {
-    case updatePlayStopState(Bool)
-    case updateCurrentVersion(String)
-    case updateCurrentMusic(Music?)
-    case updateAnswer((String, String)?)
-    case updateLoading(Bool)
-    case ignore
-  }
-
-  struct State {
-    var isPlaying = false
-    var isLoading = false
-    var currentVersion = ""
-    var answer: (title: String, artist: String)?
-    var currentMusic: Music?
-  }
+  // MARK: ReactorKit Methods
 
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
@@ -132,6 +94,9 @@ final class RandomMusicQuizReactor: Reactor {
     }
     return state
   }
+}
+
+extension RandomMusicQuizReactor {
 
   private func currentAnswer() -> (title: String, artist: String)? {
     if let currentMusic = currentState.currentMusic {
@@ -161,7 +126,7 @@ final class RandomMusicQuizReactor: Reactor {
 
   // `YTPlayerView.playVideo()` 호출 시점과 실제 재생 시점이 다름
   // `YTPlayerView` 의 state 를 확인해서 재생 타이머를 수행
-  private func playerStateHandler(_ state: PlayerState) -> Observable<Mutation> {
+  private func playerStateHandler(_ state: YoutubePlayerState) -> Observable<Mutation> {
     playerState = state
     guard playerState != .pending else { return .empty() }
 
@@ -182,4 +147,44 @@ final class RandomMusicQuizReactor: Reactor {
       return .empty()
     }
   }
+
+}
+
+// MARK: - Structures
+
+extension RandomMusicQuizReactor {
+
+  enum Action {
+    case updateMusicList
+    case playMusicButtonTapped(second: PlaySecond)
+    case didPlayToggleButtonTapped
+    case didAnswerButtonTapped
+    case shuffle
+    case playerState(YoutubePlayerState)
+    case needCurrentVersion
+  }
+
+  enum Mutation {
+    case updatePlayStopState(Bool)
+    case updateCurrentVersion(String)
+    case updateCurrentMusic(Music?)
+    case updateAnswer((String, String)?)
+    case updateLoading(Bool)
+    case ignore
+  }
+
+  struct State {
+    var isPlaying = false
+    var isLoading = false
+    var currentVersion = ""
+    var answer: (title: String, artist: String)?
+    var currentMusic: Music?
+  }
+
+  enum PlaySecond: Int {
+    case three = 3
+    case five = 5
+    case ten = 10
+  }
+
 }
