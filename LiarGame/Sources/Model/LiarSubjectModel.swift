@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum LiarGameSubject {
+enum LiarGameSubject: CaseIterable {
   case animal
   case exercise
   case food
