@@ -169,7 +169,12 @@ final class RandomMusicQuizReactor: Reactor {
 
     switch playerState {
     case .playing:
-      return .just(.updatePlayStopState(false))
+      if let second = second {
+        return .just(.updatePlayStopState(false))
+          .delay(.seconds(second.rawValue), scheduler: scheduler)
+      } else {
+        return .empty()
+      }
     case .ready:
       return .just(.updateLoading(false))
     case .cued:
