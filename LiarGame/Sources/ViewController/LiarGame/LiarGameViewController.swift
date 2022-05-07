@@ -30,25 +30,27 @@ final class LiarGameViewController: UIViewController, View {
   // 가림막 만들기 가림막은 클릭 시 확인창이 뜸
   private let curtainView = UIView()
   private let curtainLabel = UILabel().then {
-    $0.backgroundColor = .blue
     $0.text = "터치해서 가림막을 제거해주세요"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
+    $0.textColor = UIColor(hexString: "EDE6DB")
+    $0.textAlignment = .center
   }
 
   private let curtainButton = UIButton().then {
-    $0.backgroundColor = .red
+    $0.backgroundColor = UIColor(hexString: "1A3C40")
   }
 
   // 단어 나타나기 화면 만들기
   private let liarView = UIView()
   private let liarLabel = UILabel().then {
-    $0.backgroundColor = .red
     $0.text = "라이어 게임 테스트"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
+    $0.textColor = UIColor(hexString: "EDE6DB")
+    $0.textAlignment = .center
   }
 
   private let liarButton = UIButton().then {
-    $0.backgroundColor = .green
+    $0.backgroundColor = UIColor(hexString: "417D7A")
   }
 
   // 게임 시작!!!
@@ -57,13 +59,12 @@ final class LiarGameViewController: UIViewController, View {
   }
 
   private let endLabel = UILabel().then {
-    $0.backgroundColor = .blue
     $0.text = "게임을 다시 시작하려면 아래 버튼을 눌러주세요."
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
   }
 
   private let endButton = UIButton().then {
-    $0.backgroundColor = .red
+    $0.backgroundColor = UIColor(hexString: "1D5C63")
   }
 
   // MARK: Initialize
