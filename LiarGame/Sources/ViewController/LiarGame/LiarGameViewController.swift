@@ -15,30 +15,6 @@ import UIKit
 
 final class LiarGameViewController: UIViewController, View {
 
-  init(reactor: LiarGameReactor, subject: LiarGameSubject, mode: LiarGameMode, memberCount: Int) {
-    selectSubject = subject
-    self.memberCount = memberCount
-    self.mode = mode
-    super.init(nibName: nil, bundle: nil)
-    self.reactor = reactor
-  }
-
-  @available(*, unavailable)
-  required init?(coder _: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
-  override func viewDidLayoutSubviews() {
-
-  }
-
-  override func viewDidLoad() {
-    view.backgroundColor = .background
-    setupView()
-
-  }
-
-  
   // MARK: Properties
 
   private var selectSubject: LiarGameSubject // 주제
@@ -46,7 +22,6 @@ final class LiarGameViewController: UIViewController, View {
   private var memberCount: Int
   private var turn = 0
   var disposeBag = DisposeBag()
-
 
   // MARK: UI
 
@@ -59,6 +34,7 @@ final class LiarGameViewController: UIViewController, View {
     $0.text = "터치해서 가림막을 제거해주세요"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
   }
+
   private let curtainButton = UIButton().then {
     $0.backgroundColor = .red
   }
@@ -70,6 +46,7 @@ final class LiarGameViewController: UIViewController, View {
     $0.text = "라이어 게임 테스트"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
   }
+
   private let liarButton = UIButton().then {
     $0.backgroundColor = .green
   }
@@ -78,22 +55,23 @@ final class LiarGameViewController: UIViewController, View {
   private let endView = UIView().then {
     $0.isHidden = true
   }
+
   private let endLabel = UILabel().then {
     $0.backgroundColor = .blue
     $0.text = "게임을 다시 시작하려면 아래 버튼을 눌러주세요."
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
   }
+
   private let endButton = UIButton().then {
     $0.backgroundColor = .red
   }
-
 
   // MARK: Initialize
 
   init(reactor: LiarGameReactor, subject: LiarGameSubject, mode: LiarGameMode, memberCount: Int) {
     defer { self.reactor = reactor }
 
-    self.selectSubject = subject
+    selectSubject = subject
     self.memberCount = memberCount
     self.mode = mode
     super.init(nibName: nil, bundle: nil)
@@ -104,31 +82,28 @@ final class LiarGameViewController: UIViewController, View {
     fatalError("init(coder:) has not been implemented")
   }
 
-
   // MARK: View Lifecycle
 
   override func viewDidLoad() {
-    self.view.backgroundColor = UIColor(hexString: "EDE6DB")
-    self.setupView()
+    view.backgroundColor = UIColor(hexString: "EDE6DB")
+    setupView()
   }
 
   private func setupView() {
-    self.setupLiarView()
-    self.setupCurtainView()
-    self.setupEndView()
+    setupLiarView()
+    setupCurtainView()
+    setupEndView()
   }
-
 
   // MARK: Binding
 
   func bind(reactor: LiarGameReactor) {
     reactor.action.onNext(.initWord(memberCount, selectSubject, mode))
 
-    self.bindLiarLabel(with: reactor)
-    self.bindCurtainButton(with: reactor)
-    self.bindLiarButton(with: reactor)
+    bindLiarLabel(with: reactor)
+    bindCurtainButton(with: reactor)
+    bindLiarButton(with: reactor)
   }
-
 
   // MARK: View Handling
 
@@ -147,63 +122,59 @@ final class LiarGameViewController: UIViewController, View {
       animations: {
         newView.alpha = 1.0
         oldView.alpha = 0.0
-      }
-    )
+      })
   }
-
 
   // MARK: Layout
 
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
 
-    self.layoutLiarView()
-    self.layoutCurtainView()
-    self.layoutEndView()
+    layoutLiarView()
+    layoutCurtainView()
+    layoutEndView()
   }
 
   private func layoutLiarView() {
-    self.liarView.pin.width(300).height(300).center()
-    self.liarLabel.pin.width(200).height(40).center()
-    self.liarButton.pin.all()
+    liarView.pin.width(300).height(300).center()
+    liarLabel.pin.width(200).height(40).center()
+    liarButton.pin.all()
   }
 
   private func layoutCurtainView() {
-    self.curtainView.pin.width(300).height(300).center()
-    self.curtainLabel.pin.width(200).height(40).center()
-    self.curtainButton.pin.all()
+    curtainView.pin.width(300).height(300).center()
+    curtainLabel.pin.width(200).height(40).center()
+    curtainButton.pin.all()
   }
 
   private func layoutEndView() {
-    self.endView.pin.width(300).height(300).center()
-    self.endLabel.pin.width(200).height(40).center()
-    self.endButton.pin.all()
+    endView.pin.width(300).height(300).center()
+    endLabel.pin.width(200).height(40).center()
+    endButton.pin.all()
   }
 }
-
 
 // MARK: - Setup
 
 extension LiarGameViewController {
   private func setupLiarView() {
-    self.view.addSubview(self.liarView)
-    self.liarView.addSubview(self.liarButton)
-    self.liarView.addSubview(self.liarLabel)
+    view.addSubview(liarView)
+    liarView.addSubview(liarButton)
+    liarView.addSubview(liarLabel)
   }
 
   private func setupCurtainView() {
-    self.view.addSubview(curtainView)
-    self.curtainView.addSubview(curtainButton)
-    self.curtainView.addSubview(curtainLabel)
+    view.addSubview(curtainView)
+    curtainView.addSubview(curtainButton)
+    curtainView.addSubview(curtainLabel)
   }
 
   private func setupEndView() {
-    self.view.addSubview(endView)
-    self.endView.addSubview(endButton)
-    self.endView.addSubview(endLabel)
+    view.addSubview(endView)
+    endView.addSubview(endButton)
+    endView.addSubview(endLabel)
   }
 }
-
 
 // MARK: - Bind
 
@@ -217,7 +188,7 @@ extension LiarGameViewController {
   }
 
   private func bindCurtainButton(with reactor: LiarGameReactor) {
-    self.curtainButton.rx.tap
+    curtainButton.rx.tap
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] _ in
         self?.showAlert(okButtonHandler: { [weak self, weak reactor] in
@@ -233,24 +204,22 @@ extension LiarGameViewController {
     let alert = UIAlertController(
       title: "보기",
       message: "본인의 차례가 맞다면 보기를 눌러주세요",
-      preferredStyle: .alert
-    )
+      preferredStyle: .alert)
 
     let okAction = UIAlertAction(
       title: "보기",
-      style: .default
-    ) { _ in
-      okButtonHandler?()
-    }
+      style: .default) { _ in
+        okButtonHandler?()
+      }
     let cancelAction = UIAlertAction(title: "취소", style: .cancel)
     alert.addAction(okAction)
     alert.addAction(cancelAction)
 
-    self.present(alert, animated: false, completion: nil)
+    present(alert, animated: false, completion: nil)
   }
 
   private func bindLiarButton(with reactor: LiarGameReactor) {
-    self.liarButton.rx.tap
+    liarButton.rx.tap
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] _ in
         self?.updateGameState()
@@ -263,13 +232,13 @@ extension LiarGameViewController {
   }
 
   private func updateGameState() {
-    if self.turn == self.memberCount - 1 {
+    if turn == memberCount - 1 {
       print("게임이 종료되었습니다.")
-      self.endView.isHidden = false
-      self.curtainView.isHidden = true
-      self.liarView.isHidden = true
+      endView.isHidden = false
+      curtainView.isHidden = true
+      liarView.isHidden = true
     } else {
-      self.turn += 1
+      turn += 1
     }
   }
 
@@ -277,18 +246,16 @@ extension LiarGameViewController {
     let alert = UIAlertController(
       title: "확인하셨나요?",
       message: "확인버튼을 누르고 다음 차례로 넘겨주세요!",
-      preferredStyle: .alert
-    )
+      preferredStyle: .alert)
     let okAction = UIAlertAction(
       title: "확인",
-      style: .default
-    ) { _ in
-      okButtonHandler?()
-    }
+      style: .default) { _ in
+        okButtonHandler?()
+      }
     let cancelAction = UIAlertAction(title: "취소", style: .cancel)
     alert.addAction(okAction)
     alert.addAction(cancelAction)
 
-    self.present(alert, animated: false, completion: nil)
+    present(alert, animated: false, completion: nil)
   }
 }
