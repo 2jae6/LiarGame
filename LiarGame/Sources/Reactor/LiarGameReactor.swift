@@ -73,7 +73,7 @@ final class LiarGameReactor: Reactor {
 
 extension LiarGameReactor {
 
-  private func setupLiarWord(memberCount: Int, subject _: LiarGameSubject, mode _: LiarGameMode) {
+  private func setupLiarWord(memberCount: Int, subject: LiarGameSubject, mode: LiarGameMode) {
     let wordList = LiarGameList()
     let randomNumber = Int(arc4random()) % wordList.list.count
     let selectedWord = wordList.list[randomNumber]
@@ -82,8 +82,19 @@ extension LiarGameReactor {
       gameData.append(selectedWord)
     }
 
-    let insertRandomNumber = Int(arc4random()) % memberCount
-    gameData.insert(LiarGameModel(word: "라이어입니다.", subject: .job), at: insertRandomNumber)
+    if mode == .normal {
+      let insertRandomNumber = Int(arc4random()) % memberCount
+      gameData.insert(LiarGameModel(word: "라이어입니다.", subject: subject), at: insertRandomNumber)
+    } else {
+      while true {
+        let stupidRandomNumber = Int(arc4random()) % wordList.list.count
+        if selectedWord.word != wordList.list[stupidRandomNumber].word {
+          gameData.insert(LiarGameModel(word: wordList.list[stupidRandomNumber].word, subject: subject), at: stupidRandomNumber)
+          break
+        }
+      }
+    }
+
   }
 
 }
