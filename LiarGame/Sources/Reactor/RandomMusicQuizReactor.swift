@@ -13,8 +13,6 @@ final class RandomMusicQuizReactor: Reactor {
     self.repository = repository
   }
 
-  private var disposeBag = DisposeBag()
-
   var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
   var initialState = State()
   private let repository: RandomMusicRepository
