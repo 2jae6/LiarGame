@@ -5,31 +5,22 @@
 //  Created by JK on 2022/04/26.
 //
 
+import UIKit
+
 import FlexLayout
 import PinLayout
-import UIKit
 import YouTubeiOSPlayerHelper
 
 final class RandomQuizView: UIView {
-  @available(*, unavailable)
-  required init?(coder _: NSCoder) { fatalError() }
-  init() {
-    super.init(frame: .zero)
-    setupViews()
-  }
 
-  fileprivate let container = UIView()
-  private let _tintColor = UIColor.secondaryColor
+  // MARK: Properties
 
+  // Buttons
   lazy var threeSecondButton = makeRoundedButton(tintColor: _tintColor, str: "3초")
   lazy var fiveSecondButton = makeRoundedButton(tintColor: _tintColor, str: "5초")
   lazy var tenSecondButton = makeRoundedButton(tintColor: _tintColor, str: "10초")
   lazy var playButton = makeRoundedButton(tintColor: _tintColor, str: "재생")
-
-  private lazy var currentVersionLabel = UILabel().then {
-    $0.textColor = .label
-  }
-
+  lazy var showAnswerButton = makeRoundedButton(tintColor: _tintColor, str: "정답 보기")
   lazy var updateButton = makeRoundedButton(tintColor: _tintColor).then {
     $0.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
   }
@@ -38,14 +29,34 @@ final class RandomQuizView: UIView {
     $0.setImage(UIImage(systemName: "shuffle"), for: .normal)
   }
 
-  lazy var showAnswerButton = makeRoundedButton(tintColor: _tintColor, str: "정답 보기")
+  // Labels
+  private lazy var currentVersionLabel = UILabel().then {
+    $0.textColor = .label
+  }
 
   private lazy var answerLabel = DashedLineBorderdLabel(borderColor: _tintColor).then {
     $0.font = .preferredFont(forTextStyle: .title1)
     $0.isHidden = true
   }
 
+  // YTPlayer
   let ytPlayer = YTPlayerView(frame: .zero)
+
+  private var loadingView: UIView?
+  fileprivate let container = UIView()
+  private let _tintColor = UIColor.secondaryColor
+
+  // MARK: Initialize
+
+  init() {
+    super.init(frame: .zero)
+    setupViews()
+  }
+
+  @available(*, unavailable)
+  required init?(coder _: NSCoder) { fatalError() }
+
+  // MARK: LifeCycle
 
   override func layoutSubviews() {
     super.layoutSubviews()
@@ -53,6 +64,8 @@ final class RandomQuizView: UIView {
     container.pin.all(pin.safeArea)
     container.flex.layout()
   }
+
+  // MARK: Update View
 
   func setAnswerLabel(_ value: (title: String, artist: String)?) {
     if let value = value {
@@ -75,11 +88,8 @@ final class RandomQuizView: UIView {
     [threeSecondButton, fiveSecondButton, tenSecondButton]
       .forEach { $0.isEnabled = !isPlaying }
     playButton.setTitle(isPlaying ? "정지" : "시작", for: .normal)
-    if isPlaying { ytPlayer.playVideo() } else { ytPlayer.stopVideo()
-    }
+    if isPlaying { ytPlayer.playVideo() } else { ytPlayer.stopVideo() }
   }
-
-  private var loadingView: UIView?
 
   func setLoading(_ value: Bool) {
     if value {
@@ -99,6 +109,12 @@ final class RandomQuizView: UIView {
     }
   }
 
+}
+
+extension RandomQuizView {
+
+  // MARK: Setup UI
+
   private func setupViews() {
     backgroundColor = .background
     addSubview(container)
@@ -112,6 +128,7 @@ final class RandomQuizView: UIView {
           .width(100%).aspectRatio(1.0)
           .shrink(1)
 
+        // 셔플 , 버전 업데이트
         $0.addItem().direction(.row).height(150).justifyContent(.spaceAround).alignItems(.end).define {
           $0.addItem(shuffleButton).padding(8)
 
@@ -122,6 +139,7 @@ final class RandomQuizView: UIView {
           }
         }
 
+        // 재생 버튼
         $0.addItem().direction(.row).height(40).justifyContent(.spaceEvenly).define { flex in
           [playButton, threeSecondButton, fiveSecondButton, tenSecondButton].forEach {
             flex.addItem($0)
@@ -132,6 +150,7 @@ final class RandomQuizView: UIView {
 
         $0.addItem().height(30)
 
+        // 정답 영역
         $0.addItem(showAnswerButton)
           .width(150).height(50)
           .alignSelf(.center)
@@ -141,19 +160,21 @@ final class RandomQuizView: UIView {
       }
       .verticallySpacing(20)
   }
-}
 
-private func makeRoundedButton(tintColor: UIColor, str: String? = nil) -> UIButton {
-  let button = UIButton()
+  // MARK: Create Button Mehtod
 
-  button.layer.cornerRadius = 15
-  button.layer.cornerCurve = .continuous
-  button.backgroundColor = tintColor
-  button.tintColor = .white
-  str.map {
-    button.setTitle($0, for: .normal)
-    button.setTitleColor(.systemGray, for: .highlighted)
+  private func makeRoundedButton(tintColor: UIColor, str: String? = nil) -> UIButton {
+    let button = UIButton()
+
+    button.layer.cornerRadius = 15
+    button.layer.cornerCurve = .continuous
+    button.backgroundColor = tintColor
+    button.tintColor = .white
+    str.map {
+      button.setTitle($0, for: .normal)
+      button.setTitleColor(.systemGray, for: .highlighted)
+    }
+
+    return button
   }
-
-  return button
 }
