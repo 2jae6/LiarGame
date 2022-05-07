@@ -36,7 +36,7 @@ final class LiarGameSubjectViewController: UIViewController, View {
   // MARK: View Lifecycle
   override func viewDidLoad() {
     view.backgroundColor = .background
-    setupView()
+    setLayout()
   }
 
   // MARK: Layout
