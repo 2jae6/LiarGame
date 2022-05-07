@@ -73,8 +73,10 @@ final class LiarGameReactor: Reactor {
 
 extension LiarGameReactor {
 
-  private func setupLiarWord(memberCount: Int, subject: LiarGameSubject, mode: LiarGameMode) {
-    let wordList = LiarGameList()
+  private func setupLiarWord(memberCount: Int, subject: LiarGameSubject, mode _: LiarGameMode) {
+    var wordList = LiarGameList()
+    wordList.list = wordList.list.filter { $0.subject == subject }
+
     let randomNumber = Int(arc4random()) % wordList.list.count
     let selectedWord = wordList.list[randomNumber]
 

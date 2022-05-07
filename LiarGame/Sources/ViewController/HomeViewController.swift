@@ -32,7 +32,7 @@ final class HomeViewController: UIViewController, View {
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    view.backgroundColor = UIColor(hexString: "EDE6DB")
+    view.backgroundColor = .background
   }
 
   private let flexLayoutContainer: UIView = .init()
@@ -54,7 +54,7 @@ extension HomeViewController {
         flex.addItem($0)
           .width(200)
           .height(50)
-          .backgroundColor(UIColor(hexString: "417D7A"))
+          .backgroundColor(.primaryColor)
       }
     }
     .verticallySpacing(15)

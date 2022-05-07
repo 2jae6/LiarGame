@@ -49,7 +49,7 @@
 --rules redundantFileprivate
 --rules redundantRawValues
 --rules sortedImports
---rules sortDeclarations
+# --rules sortDeclarations
 --rules strongifiedSelf
 --rules trailingCommas
 --rules trailingSpace

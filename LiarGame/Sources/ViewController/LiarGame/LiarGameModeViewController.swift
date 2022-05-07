@@ -19,8 +19,8 @@ final class LiarGameModeViewController: UIViewController, View {
     self.reactor = reactor
     view.addSubview(flexLayoutContainer)
     flexLayoutContainer.flex.direction(.column).justifyContent(.center).alignItems(.center).padding(10).define { flex in
-      flex.addItem(defaultLiarGame).width(200).height(50).backgroundColor(UIColor(hexString: "417D7A"))
-      flex.addItem(stupidLiarGame).width(200).height(50).backgroundColor(UIColor(hexString: "417D7A")).marginTop(10)
+      flex.addItem(defaultLiarGame).width(200).height(50).backgroundColor(.primaryColor)
+      flex.addItem(stupidLiarGame).width(200).height(50).backgroundColor(.primaryColor).marginTop(10)
       flex.addItem(memberCountLabel).width(200).height(50).backgroundColor(.white).marginTop(30)
       flex.addItem(memberCountStepper).backgroundColor(.red).marginTop(10)
     }
@@ -36,7 +36,7 @@ final class LiarGameModeViewController: UIViewController, View {
   }
 
   override func viewDidLoad() {
-    view.backgroundColor = UIColor(hexString: "EDE6DB")
+    view.backgroundColor = .background
     setupView()
     bindingStepper()
   }
