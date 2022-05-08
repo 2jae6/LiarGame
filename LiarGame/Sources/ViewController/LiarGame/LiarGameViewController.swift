@@ -104,6 +104,7 @@ final class LiarGameViewController: UIViewController, View {
     bindLiarLabel(with: reactor)
     bindCurtainButton(with: reactor)
     bindLiarButton(with: reactor)
+    bindEndButton(with: reactor)
   }
 
   // MARK: View Handling
@@ -223,8 +224,15 @@ extension LiarGameViewController {
     liarButton.rx.tap
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] _ in
-        self?.updateGameState()
-        self?.showAlert2(okButtonHandler: { [weak self, weak reactor] in
+        guard let self = self else { return }
+        if self.turn == self.memberCount - 1 {
+          self.updateGameState()
+          return
+        }
+
+        self.turn += 1
+
+        self.showAlert2(okButtonHandler: { [weak self, weak reactor] in
           guard let self = self else { return }
           self.changeView(currentView: self.liarView, newView: self.curtainView)
           reactor?.action.onNext(.tappedLiar)
@@ -233,14 +241,10 @@ extension LiarGameViewController {
   }
 
   private func updateGameState() {
-    if turn == memberCount - 1 {
-      print("게임이 종료되었습니다.")
-      endView.isHidden = false
-      curtainView.isHidden = true
-      liarView.isHidden = true
-    } else {
-      turn += 1
-    }
+    print("게임이 종료되었습니다.")
+    endView.isHidden = false
+    curtainView.isHidden = true
+    liarView.isHidden = true
   }
 
   private func showAlert2(okButtonHandler: (() -> Void)?) {
@@ -258,5 +262,13 @@ extension LiarGameViewController {
     alert.addAction(cancelAction)
 
     present(alert, animated: false, completion: nil)
+  }
+
+  private func bindEndButton(with _: LiarGameReactor) {
+    endButton.rx.tap.asDriver()
+      .drive(onNext: { [weak self] in
+        self?.navigationController?.popViewController(animated: true)
+      })
+      .disposed(by: disposeBag)
   }
 }
