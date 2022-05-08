@@ -11,16 +11,14 @@ import Then
 import UIKit
 
 final class RandomMusicQuizViewController: UIViewController, View {
-  
-  
+
   // MARK: Properties
-  
+
   var disposeBag = DisposeBag()
   private let content = RandomQuizView()
 
-  
   // MARK: Initilaize
-  
+
   init(reactor: RandomMusicQuizReactor) {
     super.init(nibName: nil, bundle: nil)
     self.reactor = reactor
@@ -28,8 +26,7 @@ final class RandomMusicQuizViewController: UIViewController, View {
 
   @available(*, unavailable)
   required init?(coder _: NSCoder) { fatalError() }
-  
-  
+
   // MARK: LifeCycle
 
   override func loadView() {
@@ -45,9 +42,8 @@ final class RandomMusicQuizViewController: UIViewController, View {
     }
   }
 
-  
   // MARK: Bind Reactor
-  
+
   func bind(reactor: RandomMusicQuizReactor) {
     bindAction(with: reactor)
     bindState(with: reactor)
@@ -82,8 +78,8 @@ extension RandomMusicQuizViewController {
         content?.ytPlayer.load(
           withVideoId: $0.id,
           playerVars: [
-          "start": $0.startedAt
-        ])
+            "start": $0.startedAt
+          ])
       })
       .disposed(by: disposeBag)
 
@@ -99,9 +95,9 @@ extension RandomMusicQuizViewController {
       .subscribe(onNext: content.changePlayButtonState(isPlaying:))
       .disposed(by: disposeBag)
   }
-  
+
   // MARK: Binding Buttons
-  
+
   private func bindButtons(with reactor: RandomMusicQuizReactor) {
     content.threeSecondButton.rx.tap
       .map { _ in Reactor.Action.playMusicButtonTapped(second: .three) }
@@ -138,10 +134,9 @@ extension RandomMusicQuizViewController {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }
-  
-  
+
   // MARK: YTPlayer State Binding
-  
+
   private func bindYTPlayerState(with reactor: RandomMusicQuizReactor) {
     content.ytPlayer.rx.isReady
       .map { _ in Reactor.Action.playerState(.ready) }

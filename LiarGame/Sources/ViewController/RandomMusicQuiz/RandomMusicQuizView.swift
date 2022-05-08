@@ -8,6 +8,7 @@
 import UIKit
 
 import FlexLayout
+import Lottie
 import PinLayout
 import YouTubeiOSPlayerHelper
 
@@ -15,23 +16,27 @@ final class RandomQuizView: UIView {
 
   // MARK: Properties
 
+  // YTPlayer
+  let ytPlayer = YTPlayerView(frame: .zero)
+
   // Buttons
-  lazy var threeSecondButton = makeRoundedButton(tintColor: _tintColor, str: "3초")
-  lazy var fiveSecondButton = makeRoundedButton(tintColor: _tintColor, str: "5초")
-  lazy var tenSecondButton = makeRoundedButton(tintColor: _tintColor, str: "10초")
-  lazy var playButton = makeRoundedButton(tintColor: _tintColor, str: "재생")
-  lazy var showAnswerButton = makeRoundedButton(tintColor: _tintColor, str: "정답 보기")
-  lazy var updateButton = makeRoundedButton(tintColor: _tintColor).then {
+  lazy var threeSecondButton = makeButton(tintColor: _tintColor, str: "3초")
+  lazy var fiveSecondButton = makeButton(tintColor: _tintColor, str: "5초")
+  lazy var tenSecondButton = makeButton(tintColor: _tintColor, str: "10초")
+  lazy var playButton = makeButton(tintColor: _tintColor, str: "재생")
+  lazy var showAnswerButton = makeButton(tintColor: _tintColor, str: "정답 보기")
+  lazy var updateButton = makeButton(tintColor: _tintColor).then {
     $0.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
   }
 
-  lazy var shuffleButton = makeRoundedButton(tintColor: _tintColor).then {
+  lazy var shuffleButton = makeButton(tintColor: _tintColor).then {
     $0.setImage(UIImage(systemName: "shuffle"), for: .normal)
   }
 
   // Labels
   private lazy var currentVersionLabel = UILabel().then {
     $0.textColor = .label
+    $0.font = .preferredFont(forTextStyle: .caption1)
   }
 
   private lazy var answerLabel = DashedLineBorderdLabel(borderColor: _tintColor).then {
@@ -39,12 +44,9 @@ final class RandomQuizView: UIView {
     $0.isHidden = true
   }
 
-  // YTPlayer
-  let ytPlayer = YTPlayerView(frame: .zero)
-
   private var loadingView: UIView?
   fileprivate let container = UIView()
-  private let _tintColor = UIColor.secondaryColor
+  private let _tintColor = UIColor.primaryColor
 
   // MARK: Initialize
 
@@ -79,7 +81,7 @@ final class RandomQuizView: UIView {
   }
 
   func setVersionLabel(_ value: String) {
-    currentVersionLabel.text = value
+    currentVersionLabel.text = "현재 버전: \(value)"
     currentVersionLabel.flex.markDirty()
     container.flex.layout()
   }
@@ -122,25 +124,23 @@ extension RandomQuizView {
     ytPlayer.isHidden = true
 
     container.flex
-      .direction(.column).justifyContent(.center).marginHorizontal(20).define {
-        // 장르 선택 영역
-        $0.addItem(UILabel().then { $0.text = "Genre Area"; $0.backgroundColor = .systemGray; $0.textAlignment = .center })
-          .width(100%).aspectRatio(1.0)
-          .shrink(1)
+      .direction(.column).justifyContent(.start).marginHorizontal(20).define {
+        $0.addItem(currentVersionLabel)
+          .alignSelf(.end)
+
+        $0.addItem().height(20%)
 
         // 셔플 , 버전 업데이트
-        $0.addItem().direction(.row).height(150).justifyContent(.spaceAround).alignItems(.end).define {
-          $0.addItem(shuffleButton).padding(8)
-
-          $0.addItem().direction(.column).justifyContent(.start).alignItems(.center).define {
-            $0.addItem(currentVersionLabel)
-            $0.addItem(updateButton).padding(8)
-              .marginTop(8)
+        $0.addItem().direction(.row).justifyContent(.start).alignItems(.start).define { flex in
+          [shuffleButton, updateButton].forEach {
+            flex.addItem($0)
+              .size(30)
           }
         }
+        .horizontallySpacing(5)
 
         // 재생 버튼
-        $0.addItem().direction(.row).height(40).justifyContent(.spaceEvenly).define { flex in
+        $0.addItem().direction(.row).height(40).justifyContent(.spaceBetween).define { flex in
           [playButton, threeSecondButton, fiveSecondButton, tenSecondButton].forEach {
             flex.addItem($0)
               .grow(1)
@@ -148,7 +148,7 @@ extension RandomQuizView {
         }
         .horizontallySpacing(10)
 
-        $0.addItem().height(30)
+        $0.addItem().height(10)
 
         // 정답 영역
         $0.addItem(showAnswerButton)
@@ -157,17 +157,16 @@ extension RandomQuizView {
         $0.addItem(answerLabel)
           .padding(1)
           .alignSelf(.center)
+
       }
       .verticallySpacing(20)
   }
 
   // MARK: Create Button Mehtod
 
-  private func makeRoundedButton(tintColor: UIColor, str: String? = nil) -> UIButton {
+  private func makeButton(tintColor: UIColor, str: String? = nil) -> UIButton {
     let button = UIButton()
 
-    button.layer.cornerRadius = 15
-    button.layer.cornerCurve = .continuous
     button.backgroundColor = tintColor
     button.tintColor = .white
     str.map {
