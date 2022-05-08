@@ -112,18 +112,12 @@ final class LiarGameViewController: UIViewController, View {
     guard currentView != newView else { return }
 
     let oldView: UIView = currentView
-    oldView.alpha = 0.0
-    oldView.isHidden = true
 
-    newView.isHidden = false
-    newView.alpha = 1.0
+    UIView.transition(with: newView, duration: 1.0, options: .transitionCurlUp) {
+      newView.alpha = 1.0
+      oldView.alpha = 0.0
+    }
 
-    UIView.animate(
-      withDuration: Double(0.5),
-      animations: {
-        newView.alpha = 1.0
-        oldView.alpha = 0.0
-      })
   }
 
   // MARK: Layout
