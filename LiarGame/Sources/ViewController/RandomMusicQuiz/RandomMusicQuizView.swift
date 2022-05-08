@@ -44,6 +44,11 @@ final class RandomQuizView: UIView {
     $0.isHidden = true
   }
 
+  // Lottie Animation
+  private let musicPlayingAnimation = AnimationView(name: "music_playing").then {
+    $0.loopMode = .loop
+  }
+
   private var loadingView: UIView?
   fileprivate let container = UIView()
   private let _tintColor = UIColor.primaryColor
@@ -111,6 +116,10 @@ final class RandomQuizView: UIView {
     }
   }
 
+  func updatePlayingAnimation(_ value: Bool) {
+    if value { musicPlayingAnimation.play() } else { musicPlayingAnimation.pause() }
+  }
+
 }
 
 extension RandomQuizView {
@@ -156,6 +165,13 @@ extension RandomQuizView {
           .alignSelf(.center)
         $0.addItem(answerLabel)
           .padding(1)
+          .alignSelf(.center)
+
+        $0.addItem().grow(1)
+
+        $0.addItem(musicPlayingAnimation)
+          .width(50%)
+          .aspectRatio(1.0)
           .alignSelf(.center)
 
       }

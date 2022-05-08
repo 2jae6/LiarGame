@@ -94,6 +94,13 @@ extension RandomMusicQuizViewController {
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: content.changePlayButtonState(isPlaying:))
       .disposed(by: disposeBag)
+
+    reactor.state.map(\.isPlaying)
+      .distinctUntilChanged()
+      .observe(on: MainScheduler.instance)
+      .subscribe(onNext: content.updatePlayingAnimation(_:))
+      .disposed(by: disposeBag)
+
   }
 
   // MARK: Binding Buttons
