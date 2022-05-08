@@ -150,7 +150,7 @@ extension RandomMusicQuizViewController {
 
     content.ytPlayer.rx.state
       .map {
-        let playerState: RandomMusicQuizReactor.PlayerState
+        let playerState: YoutubePlayerState
         switch $0 {
         case .playing:
           playerState = .playing
