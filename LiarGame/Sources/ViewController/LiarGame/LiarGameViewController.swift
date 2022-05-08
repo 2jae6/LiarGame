@@ -56,15 +56,19 @@ final class LiarGameViewController: UIViewController, View {
   // 게임 시작!!!
   private let endView = UIView().then {
     $0.isHidden = true
+    $0.backgroundColor = UIColor.secondaryColor
   }
 
   private let endLabel = UILabel().then {
-    $0.text = "게임을 다시 시작하려면 아래 버튼을 눌러주세요."
+    $0.text = "게임을 시작하세요!\n해당 화면을 터치하면 주제를 다시 선택합니다."
+    $0.numberOfLines = 2
+    $0.textAlignment = .center
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
+    $0.textColor = .background
   }
 
   private let endButton = UIButton().then {
-    $0.backgroundColor = UIColor(hexString: "1D5C63")
+    $0.backgroundColor = .clear
   }
 
   // MARK: Initialize
@@ -151,7 +155,7 @@ final class LiarGameViewController: UIViewController, View {
 
   private func layoutEndView() {
     endView.pin.width(300).height(300).center()
-    endLabel.pin.width(200).height(40).center()
+    endLabel.pin.width(300).height(40).center()
     endButton.pin.all()
   }
 }
@@ -241,10 +245,13 @@ extension LiarGameViewController {
   }
 
   private func updateGameState() {
-    print("게임이 종료되었습니다.")
-    endView.isHidden = false
+
     curtainView.isHidden = true
     liarView.isHidden = true
+
+    UIView.transition(with: endView, duration: 0.7, options: .transitionFlipFromRight) { [weak self] in
+      self?.endView.isHidden = false
+    }
   }
 
   private func showAlert2(okButtonHandler: (() -> Void)?) {
