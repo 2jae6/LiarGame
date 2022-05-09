@@ -161,7 +161,7 @@ extension RandomMusicQuizViewController {
         case .cued:
           playerState = .cued
         default:
-          playerState = .unknwon
+          playerState = .unknown
         }
         return playerState
       }
