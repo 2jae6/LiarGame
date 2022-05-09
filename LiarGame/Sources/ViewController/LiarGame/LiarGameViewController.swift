@@ -56,15 +56,19 @@ final class LiarGameViewController: UIViewController, View {
   // 게임 시작!!!
   private let endView = UIView().then {
     $0.isHidden = true
+    $0.backgroundColor = UIColor.secondaryColor
   }
 
   private let endLabel = UILabel().then {
-    $0.text = "게임을 다시 시작하려면 아래 버튼을 눌러주세요."
+    $0.text = "게임을 시작하세요!\n해당 화면을 터치하면 주제를 다시 선택합니다."
+    $0.numberOfLines = 2
+    $0.textAlignment = .center
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
+    $0.textColor = .background
   }
 
   private let endButton = UIButton().then {
-    $0.backgroundColor = UIColor(hexString: "1D5C63")
+    $0.backgroundColor = .clear
   }
 
   // MARK: Initialize
@@ -104,6 +108,7 @@ final class LiarGameViewController: UIViewController, View {
     bindLiarLabel(with: reactor)
     bindCurtainButton(with: reactor)
     bindLiarButton(with: reactor)
+    bindEndButton(with: reactor)
   }
 
   // MARK: View Handling
@@ -144,7 +149,7 @@ final class LiarGameViewController: UIViewController, View {
 
   private func layoutEndView() {
     endView.pin.width(300).height(300).center()
-    endLabel.pin.width(200).height(40).center()
+    endLabel.pin.width(300).height(40).center()
     endButton.pin.all()
   }
 }
@@ -217,8 +222,15 @@ extension LiarGameViewController {
     liarButton.rx.tap
       .observe(on: MainScheduler.instance)
       .subscribe(onNext: { [weak self] _ in
-        self?.updateGameState()
-        self?.showAlert2(okButtonHandler: { [weak self, weak reactor] in
+        guard let self = self else { return }
+        if self.turn == self.memberCount - 1 {
+          self.updateGameState()
+          return
+        }
+
+        self.turn += 1
+
+        self.showAlert2(okButtonHandler: { [weak self, weak reactor] in
           guard let self = self else { return }
           self.changeView(currentView: self.liarView, newView: self.curtainView)
           reactor?.action.onNext(.tappedLiar)
@@ -227,13 +239,12 @@ extension LiarGameViewController {
   }
 
   private func updateGameState() {
-    if turn == memberCount - 1 {
-      print("게임이 종료되었습니다.")
-      endView.isHidden = false
-      curtainView.isHidden = true
-      liarView.isHidden = true
-    } else {
-      turn += 1
+
+    curtainView.isHidden = true
+    liarView.isHidden = true
+
+    UIView.transition(with: endView, duration: 0.7, options: .transitionFlipFromRight) { [weak self] in
+      self?.endView.isHidden = false
     }
   }
 
@@ -252,5 +263,13 @@ extension LiarGameViewController {
     alert.addAction(cancelAction)
 
     present(alert, animated: false, completion: nil)
+  }
+
+  private func bindEndButton(with _: LiarGameReactor) {
+    endButton.rx.tap.asDriver()
+      .drive(onNext: { [weak self] in
+        self?.navigationController?.popViewController(animated: true)
+      })
+      .disposed(by: disposeBag)
   }
 }
