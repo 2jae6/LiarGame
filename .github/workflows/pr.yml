@@ -11,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set Secret.xcconfig
+        run: echo "${{ secrets.GOOGLE_APIKEY }}" > xcconfig/Secret.xcconfig
+
       - name: xcodegen
         run: |
           brew install xcodegen
