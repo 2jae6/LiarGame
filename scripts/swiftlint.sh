@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if ! command -v swiftlint &>/dev/null; then 
-  brew install swiftlint
+  echo "SwiftLint Skipped"
 else
   swiftlint --fix
 fi
