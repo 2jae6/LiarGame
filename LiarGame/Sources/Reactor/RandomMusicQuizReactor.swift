@@ -17,7 +17,7 @@ final class RandomMusicQuizReactor: Reactor {
   var initialState = State()
 
   private let repository: RandomMusicRepository
-  private var playerState: YoutubePlayerState = .unknwon
+  private var playerState: YoutubePlayerState = .unknown
   private var second: PlaySecond?
 
   // MARK: Initialize
@@ -114,7 +114,7 @@ extension RandomMusicQuizReactor {
     }
 
     guard repository.musicList.count > 0 else {
-      playerState = .unknwon
+      playerState = .unknown
       return .just(.updateLoading(false))
     }
 

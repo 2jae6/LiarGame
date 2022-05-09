@@ -18,5 +18,5 @@ enum YoutubePlayerState {
   case playing
   /// 재생정지(stopVideo) 호출 시 cued
   case cued
-  case unknwon
+  case unknown
 }

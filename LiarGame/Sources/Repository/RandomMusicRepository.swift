@@ -31,7 +31,7 @@ final class RandomMusicRepository: RandomMusicRepositoryType {
     Self._currentVersion
   }
 
-  @UserDefault(key: "RandomMusicVersion", defaultValue: "unknwon")
+  @UserDefault(key: "RandomMusicVersion", defaultValue: "unknown")
   private static var _currentVersion: String
 
   /// 저장되어있는 음악 목록을 가져옵니다.
