@@ -32,12 +32,12 @@ final class LiarGameViewController: UIViewController, View {
   private let curtainLabel = UILabel().then {
     $0.text = "터치해서 가림막을 제거해주세요"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
-    $0.textColor = UIColor(hexString: "EDE6DB")
+    $0.textColor = .background
     $0.textAlignment = .center
   }
 
   private let curtainButton = UIButton().then {
-    $0.backgroundColor = UIColor(hexString: "1A3C40")
+    $0.backgroundColor = .subColor
   }
 
   // 단어 나타나기 화면 만들기
@@ -45,12 +45,12 @@ final class LiarGameViewController: UIViewController, View {
   private let liarLabel = UILabel().then {
     $0.text = "라이어 게임 테스트"
     $0.font = .systemFont(ofSize: 14, weight: .semibold)
-    $0.textColor = UIColor(hexString: "EDE6DB")
+    $0.textColor = .background
     $0.textAlignment = .center
   }
 
   private let liarButton = UIButton().then {
-    $0.backgroundColor = UIColor(hexString: "417D7A")
+    $0.backgroundColor = .primaryColor
   }
 
   // 게임 시작!!!
@@ -90,7 +90,7 @@ final class LiarGameViewController: UIViewController, View {
   // MARK: View Lifecycle
 
   override func viewDidLoad() {
-    view.backgroundColor = UIColor(hexString: "EDE6DB")
+    view.backgroundColor = .background
     setupView()
   }
 
