@@ -16,7 +16,6 @@ https://github.com/2jae6/LiarGame/pulls?q=is%3Apr+is%3Aclosed
 ## Skill Stack
 - PinLayout, FlexLayout
 - Reactorkit
-- Moya
 - RxSwift
 - RxCocoa
 - RxRelay
