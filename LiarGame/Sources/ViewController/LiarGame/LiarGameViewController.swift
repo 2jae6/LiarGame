@@ -7,16 +7,31 @@
 
 import FlexLayout
 import PinLayout
+import Pure
 import ReactorKit
 import RxCocoa
 import RxSwift
 import Then
 import UIKit
 
-final class LiarGameViewController: UIViewController, View {
+final class LiarGameViewController: UIViewController, View, FactoryModule {
+  
+  // MARK: Depdency & Payload
+  
+  struct Dependency {
+    let reactorFactory: LiarGameReactor.Factory
+  }
+
+  struct Payload {
+    let reactor: LiarGameReactor
+    let mode: LiarGameMode
+    let memberCount: Int
+    let subject: LiarGameSubject
+  }
 
   // MARK: Properties
 
+  private let dependency: Dependency
   private var selectSubject: LiarGameSubject // 주제
   private var mode: LiarGameMode // 게임 모드
   private var memberCount: Int
@@ -73,12 +88,14 @@ final class LiarGameViewController: UIViewController, View {
 
   // MARK: Initialize
 
-  init(reactor: LiarGameReactor, subject: LiarGameSubject, mode: LiarGameMode, memberCount: Int) {
-    defer { self.reactor = reactor }
+  init(dependency: Dependency, payload: Payload) {
+    defer { self.reactor = payload.reactor }
 
-    selectSubject = subject
-    self.memberCount = memberCount
-    self.mode = mode
+    selectSubject = payload.subject
+    memberCount = payload.memberCount
+    mode = payload.mode
+    self.dependency = dependency
+
     super.init(nibName: nil, bundle: nil)
   }
 

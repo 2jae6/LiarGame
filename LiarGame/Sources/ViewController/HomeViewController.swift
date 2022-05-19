@@ -22,6 +22,7 @@ final class HomeViewController: UIViewController, View, FactoryModule {
     let reactorFactory: HomeReactor.Factory
 
     let randomMusicQuizFactory: RandomMusicQuizViewController.Factory
+    let liarGameModeFactory: LiarGameModeViewController.Factory
   }
 
   struct Payload {
@@ -104,7 +105,9 @@ extension HomeViewController {
       .subscribe(onNext: { `self`, mode in
         switch mode {
         case .liarGame:
-          let liarVC = LiarGameModeViewController(reactor: LiarGameModeReactor())
+          let factory = self.dependency.liarGameModeFactory
+          let reactor = factory.dependency.reactorFactory.create()
+          let liarVC = factory.create(payload: .init(reactor: reactor))
           liarVC.modalPresentationStyle = .fullScreen
           self.navigationController?.pushViewController(liarVC, animated: true)
         case .randomMusicQuiz:
