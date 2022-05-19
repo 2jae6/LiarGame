@@ -17,7 +17,14 @@ final class SplashViewController: UIViewController, FactoryModule {
     let homeViewControllerFactory: HomeViewController.Factory
   }
 
-  let dependency: Dependency
+  // MARK: Properties
+
+  private let dependency: Dependency
+  private let flexContainer = UIView()
+  private let animationView = AnimationView(name: "launch")
+  private let titleImageView = UIImageView()
+
+  // MARK: Initialize
 
   init(dependency: Dependency, payload _: Void) {
     self.dependency = dependency
@@ -33,6 +40,8 @@ final class SplashViewController: UIViewController, FactoryModule {
   required init?(coder _: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+
+  // MARK: Life Cycle
 
   override func viewDidLayoutSubviews() {
     flexContainer.pin.all()
@@ -61,9 +70,5 @@ final class SplashViewController: UIViewController, FactoryModule {
     }
     animationView.loopMode = .playOnce
   }
-
-  let flexContainer = UIView()
-  let animationView = AnimationView(name: "launch")
-  let titleImageView = UIImageView()
 
 }

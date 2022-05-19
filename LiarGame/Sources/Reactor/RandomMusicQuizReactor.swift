@@ -7,23 +7,30 @@
 
 import Foundation
 
+import Pure
 import ReactorKit
 
-final class RandomMusicQuizReactor: Reactor {
+final class RandomMusicQuizReactor: Reactor, FactoryModule {
+
+  // MARK: Depdency & Payload
+
+  struct Dependency {
+    let repository: RandomMusicRepository
+  }
 
   // MARK: Properties
 
   var scheduler = SerialDispatchQueueScheduler(internalSerialQueueName: "random.music.quiz")
   var initialState = State()
 
-  private let repository: RandomMusicRepository
+  private let dependency: Dependency
   private var playerState: YoutubePlayerState = .unknown
   private var second: PlaySecond?
 
   // MARK: Initialize
 
-  init(repository: RandomMusicRepository) {
-    self.repository = repository
+  init(dependency: Dependency, payload _: Void) {
+    self.dependency = dependency
   }
 
   // MARK: ReactorKit Methods
@@ -37,7 +44,7 @@ final class RandomMusicQuizReactor: Reactor {
         .just(.updateLoading(true)),
         .just(.updatePlayStopState(false)),
         .just(.updateAnswer(nil)),
-        repository.getNewestVersion()
+        dependency.repository.getNewestVersion()
           .asObservable()
           .flatMap { list, version -> Observable<Mutation> in
             .concat([
@@ -70,7 +77,7 @@ final class RandomMusicQuizReactor: Reactor {
         shuffleMusic())
 
     case .needCurrentVersion:
-      return .just(.updateCurrentVersion(repository.currentVersion))
+      return .just(.updateCurrentVersion(dependency.repository.currentVersion))
 
     case .playerState(let state):
       return playerStateHandler(state)
@@ -113,15 +120,15 @@ extension RandomMusicQuizReactor {
       return .just(Mutation.updateCurrentMusic(musicList[randomNumber]))
     }
 
-    guard repository.musicList.count > 0 else {
+    guard dependency.repository.musicList.count > 0 else {
       playerState = .unknown
       return .just(.updateLoading(false))
     }
 
-    let size = repository.musicList.count
+    let size = dependency.repository.musicList.count
     let randomNumber = Int(arc4random()) % size
 
-    return .just(.updateCurrentMusic(repository.musicList[randomNumber]))
+    return .just(.updateCurrentMusic(dependency.repository.musicList[randomNumber]))
   }
 
   // `YTPlayerView.playVideo()` 호출 시점과 실제 재생 시점이 다름

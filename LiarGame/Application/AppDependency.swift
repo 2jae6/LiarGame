@@ -15,8 +15,16 @@ struct AppDependency {
 
 extension AppDependency {
   static func resolve() -> AppDependency {
-    let homeReacotr = HomeReactor.Factory()
-    let homeVC = HomeViewController.Factory(dependency: .init(reactorFactory: homeReacotr))
+    let randomMusicRepository = RandomMusicRepository()
+
+    let randomMusicReactor = RandomMusicQuizReactor.Factory(dependency: .init(repository: randomMusicRepository))
+    let randomMusicVC = RandomMusicQuizViewController.Factory(dependency: .init(reactorFactory: randomMusicReactor))
+
+    let homeReactor = HomeReactor.Factory()
+    let homeVC = HomeViewController.Factory(
+      dependency: .init(
+        reactorFactory: homeReactor,
+        randomMusicQuizFactory: randomMusicVC))
 
     let splashVC = SplashViewController.Factory(dependency: .init(
       homeViewControllerFactory: homeVC))

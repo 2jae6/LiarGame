@@ -16,15 +16,30 @@ import UIKit
 final class HomeViewController: UIViewController, View, FactoryModule {
   typealias Reactor = HomeReactor
 
+  // MARK: Depdency & Payload
+
   struct Dependency {
     let reactorFactory: HomeReactor.Factory
+
+    let randomMusicQuizFactory: RandomMusicQuizViewController.Factory
   }
 
   struct Payload {
     let reactor: HomeReactor
   }
 
-  let dependency: Dependency
+  // MARK: Properties
+
+  private let dependency: Dependency
+  private let flexLayoutContainer: UIView = .init()
+
+  var disposeBag: DisposeBag = .init()
+
+  private lazy var gameList = [liarGameStartButton, randomMusicQuizButton]
+  private let liarGameStartButton = makeGameButton(str: "라이어 게임")
+  private let randomMusicQuizButton = makeGameButton(str: "랜덤 음악 맞추기")
+
+  // MARK: Initialize
 
   init(dependency: Dependency, payload: Payload) {
     defer { reactor = payload.reactor }
@@ -36,6 +51,8 @@ final class HomeViewController: UIViewController, View, FactoryModule {
   @available(*, unavailable)
   required init?(coder _: NSCoder) { fatalError() }
 
+  // MARK: Life Cycle
+
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     flexLayoutContainer.pin.all(view.pin.safeArea)
@@ -46,14 +63,6 @@ final class HomeViewController: UIViewController, View, FactoryModule {
     super.viewDidLoad()
     view.backgroundColor = .background
   }
-
-  private let flexLayoutContainer: UIView = .init()
-
-  var disposeBag: DisposeBag = .init()
-
-  private lazy var gameList = [liarGameStartButton, randomMusicQuizButton]
-  private let liarGameStartButton = makeGameButton(str: "라이어 게임")
-  private let randomMusicQuizButton = makeGameButton(str: "랜덤 음악 맞추기")
 }
 
 // MARK: - Setup View
@@ -99,8 +108,10 @@ extension HomeViewController {
           liarVC.modalPresentationStyle = .fullScreen
           self.navigationController?.pushViewController(liarVC, animated: true)
         case .randomMusicQuiz:
-          let reactor = RandomMusicQuizReactor(repository: RandomMusicRepository())
-          let vc = RandomMusicQuizViewController(reactor: reactor)
+          let factory = self.dependency.randomMusicQuizFactory
+          let reactor = factory.dependency.reactorFactory.create()
+
+          let vc = factory.create(payload: .init(reactor: reactor))
           vc.modalPresentationStyle = .fullScreen
           self.navigationController?.pushViewController(vc, animated: true)
         }
