@@ -8,11 +8,20 @@
 import FlexLayout
 import Lottie
 import PinLayout
+import Pure
 import Then
 import UIKit
 
-final class SplashViewController: UIViewController {
-  init() {
+final class SplashViewController: UIViewController, FactoryModule {
+  struct Dependency {
+
+  }
+
+  let dependency: Dependency
+
+  init(dependency: Dependency, payload _: Void) {
+    self.dependency = dependency
+
     super.init(nibName: nil, bundle: nil)
     flexContainer.flex.direction(.column).justifyContent(.center).define { flex in
       flex.addItem(titleImageView).width(100%).height(300)

@@ -9,6 +9,12 @@ import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
+  let dependency: AppDependency
+
+  override init() {
+    dependency = AppDependency.resolve()
+    super.init()
+  }
 
   func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -17,8 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = (scene as? UIWindowScene) else { return }
 
     window = UIWindow(windowScene: windowScene) // SceneDelegate의 프로퍼티에 설정해줌
-    let mainViewController = SplashViewController() // 맨 처음 보여줄 ViewController
-    window?.rootViewController = mainViewController
+    window?.rootViewController = dependency.rootViewControllerFactory.create() // 맨 처음 보여줄 ViewController
     window?.makeKeyAndVisible()
   }
 
