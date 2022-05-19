@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import Pure
 import ReactorKit
 import RxCocoa
 import RxSwift
 
-final class HomeReactor: Reactor {
+final class HomeReactor: Reactor, FactoryModule {
+  init(dependency _: Void, payload _: Void) { }
+
   enum Action {
     case updateMode(GameMode)
   }

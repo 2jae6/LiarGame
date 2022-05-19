@@ -7,17 +7,29 @@
 
 import FlexLayout
 import PinLayout
+import Pure
 import ReactorKit
 import RxCocoa
 import RxSwift
 import UIKit
 
-final class HomeViewController: UIViewController, View {
+final class HomeViewController: UIViewController, View, FactoryModule {
   typealias Reactor = HomeReactor
 
-  init(reactor: HomeReactor) {
+  struct Dependency {
+    let reactorFactory: HomeReactor.Factory
+  }
+
+  struct Payload {
+    let reactor: HomeReactor
+  }
+
+  let dependency: Dependency
+
+  init(dependency: Dependency, payload: Payload) {
+    defer { reactor = payload.reactor }
+    self.dependency = dependency
     super.init(nibName: nil, bundle: nil)
-    self.reactor = reactor
     setupView()
   }
 

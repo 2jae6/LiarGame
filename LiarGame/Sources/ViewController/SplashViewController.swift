@@ -14,7 +14,7 @@ import UIKit
 
 final class SplashViewController: UIViewController, FactoryModule {
   struct Dependency {
-
+    let homeViewControllerFactory: HomeViewController.Factory
   }
 
   let dependency: Dependency
@@ -50,8 +50,12 @@ final class SplashViewController: UIViewController, FactoryModule {
     super.viewDidAppear(animated)
 
     titleImageView.image = UIImage(named: "launch_title")
-    animationView.play { _ in
-      let homeVC = UINavigationController(rootViewController: HomeViewController(reactor: HomeReactor()))
+    animationView.play { [weak self] _ in
+      guard let self = self else { return }
+      let factory = self.dependency.homeViewControllerFactory
+      let reactor = factory.dependency.reactorFactory.create()
+
+      let homeVC = UINavigationController(rootViewController: factory.create(payload: .init(reactor: reactor)))
       homeVC.modalPresentationStyle = .fullScreen
       self.present(homeVC, animated: false, completion: nil)
     }

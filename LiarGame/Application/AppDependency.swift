@@ -15,7 +15,11 @@ struct AppDependency {
 
 extension AppDependency {
   static func resolve() -> AppDependency {
-    let splashVC = SplashViewController.Factory(dependency: .init())
+    let homeReacotr = HomeReactor.Factory()
+    let homeVC = HomeViewController.Factory(dependency: .init(reactorFactory: homeReacotr))
+
+    let splashVC = SplashViewController.Factory(dependency: .init(
+      homeViewControllerFactory: homeVC))
 
     return AppDependency(rootViewControllerFactory: splashVC)
   }
