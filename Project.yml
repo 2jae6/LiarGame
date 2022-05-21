@@ -1,4 +1,4 @@
-name: LiarGame
+name: GameBundle
 configs:
   Debug: debug
   Release: release
@@ -35,23 +35,26 @@ packages:
     version: 1.1.4
 
 targets:
-  LiarGame:
+  GameBundle:
     type: application
     platform: iOS
-
-    deploymentTarget: "13.0"
+    deploymentTarget: "15.2"
 
     configFiles:
-      Debug: xcconfig/LiarGame-Debug.xcconfig
-      Release: xcconfig/LiarGame-Release.xcconfig
+      Debug: xcconfig/GameBundle-Debug.xcconfig
+      Release: xcconfig/GameBundle-Release.xcconfig
 
-    sources: [LiarGame]
+    sources: [Targets/GameBundle]
     settings:
       base:
-        INFOPLIST_FILE: LiarGame/Resources/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: Jay.LiarGameme
+        INFOPLIST_FILE: Targets/GameBundle/Resources/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: Jay.LiarGamem
 
     dependencies:
+      - target: LiarGame
+      - target: Home
+      - target: RandomMusic
+      - target: UtilKit
       - package: Then
       - package: RxSwift
         product: RxSwift
@@ -66,6 +69,114 @@ targets:
       - package: Pure
         product: Pure
       - framework: frameworks/YouTubeiOSPlayerHelper.xcframework
+    preBuildScripts:
+      - path: scripts/swiftformat.sh
+        name: Swift Format
+      - path: scripts/swiftlint.sh
+        name: Swift Lint
+
+  Home:
+    type: framework.static
+    platform: iOS
+    deploymentTarget: "15.2"
+    info:
+      path: Targets/Home/Resources/Info.plist
+    configFiles:
+      Debug: xcconfig/GameBundle-Debug.xcconfig
+      Release: xcconfig/GameBundle-Release.xcconfig
+    sources: [Targets/Home]
+    dependencies:
+      - target: UtilKit
+      - target: RandomMusic
+      - target: LiarGame
+      - package: Then
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+      - package: ReactorKit
+      - package: PinLayout
+      - package: FlexLayout
+      - package: Pure
+    preBuildScripts:
+      - path: scripts/swiftformat.sh
+        name: Swift Format
+      - path: scripts/swiftlint.sh
+        name: Swift Lint
+
+  LiarGame:
+    type: framework.static
+    platform: iOS
+    deploymentTarget: "15.2"
+    info:
+      path: Targets/LiarGame/Resources/Info.plist
+    configFiles:
+      Debug: xcconfig/GameBundle-Debug.xcconfig
+      Release: xcconfig/GameBundle-Release.xcconfig
+    sources: [Targets/LiarGame]
+    dependencies:
+      - target: UtilKit
+      - package: Then
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+      - package: ReactorKit
+      - package: PinLayout
+      - package: FlexLayout
+      - package: Pure
+    preBuildScripts:
+      - path: scripts/swiftformat.sh
+        name: Swift Format
+      - path: scripts/swiftlint.sh
+        name: Swift Lint
+
+  RandomMusic:
+    type: framework.static
+    platform: iOS
+    deploymentTarget: "15.2"
+    info:
+      path: Targets/RandomMusic/Resources/Info.plist
+    configFiles:
+      Debug: xcconfig/GameBundle-Debug.xcconfig
+      Release: xcconfig/GameBundle-Release.xcconfig
+    sources: [Targets/RandomMusic]
+    dependencies:
+      - target: UtilKit
+      - package: Pure
+      - package: Then
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+      - package: ReactorKit
+      - package: PinLayout
+      - package: FlexLayout
+      - package: Lottie
+      - framework: frameworks/YouTubeiOSPlayerHelper.xcframework
+    preBuildScripts:
+      - path: scripts/swiftformat.sh
+        name: Swift Format
+      - path: scripts/swiftlint.sh
+        name: Swift Lint
+
+  UtilKit:
+    type: framework.static
+    platform: iOS
+    info:
+      path: Targets/UtilKit/Resources/Info.plist
+    configFiles:
+      Debug: xcconfig/GameBundle-Debug.xcconfig
+      Release: xcconfig/GameBundle-Release.xcconfig
+    sources: [Targets/UtilKit]
+    dependencies:
+      - package: FlexLayout
     preBuildScripts:
       - path: scripts/swiftformat.sh
         name: Swift Format
