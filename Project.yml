@@ -30,6 +30,9 @@ packages:
   Lottie:
     url: https://github.com/airbnb/lottie-ios
     version: 3.3.0
+  Pure:
+    url: https://github.com/devxoul/Pure
+    version: 1.1.4
 
 targets:
   LiarGame:
@@ -60,6 +63,8 @@ targets:
       - package: PinLayout
       - package: FlexLayout
       - package: Lottie
+      - package: Pure
+        product: Pure
       - framework: frameworks/YouTubeiOSPlayerHelper.xcframework
     preBuildScripts:
       - path: scripts/swiftformat.sh

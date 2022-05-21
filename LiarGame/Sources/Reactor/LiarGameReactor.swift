@@ -6,12 +6,12 @@
 //
 
 import Foundation
+import Pure
 import ReactorKit
 import RxSwift
 import Then
 
-final class LiarGameReactor: Reactor {
-
+final class LiarGameReactor: Reactor, FactoryModule {
   enum Action {
     case initWord(Int, LiarGameSubject, LiarGameMode)
     case tappedCurtain
@@ -31,9 +31,16 @@ final class LiarGameReactor: Reactor {
     var liarSetText: String?
   }
 
+  // MARK: Properties
+  
   var initialState = State()
   var gameData = [LiarGameModel]()
   var turn = 0
+  
+  // MARK: Initialize
+  
+  init(dependency _: Void, payload _: Void) { }
+  
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .initWord(let memberCount, let selectSubject, let mode):

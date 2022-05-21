@@ -5,28 +5,47 @@
 //  Created by Jay on 2022/04/20.
 //
 
-import FlexLayout
-import PinLayout
-import ReactorKit
-import Then
 import UIKit
 
-final class LiarGameSubjectViewController: UIViewController, View {
+import FlexLayout
+import PinLayout
+import Pure
+import ReactorKit
+import Then
+
+final class LiarGameSubjectViewController: UIViewController, View, FactoryModule {
+
+  struct Dependency {
+    let reactorFactory: LiarGameSubjectReactor.Factory
+
+    let liarGameFactory: LiarGameViewController.Factory
+  }
+
+  struct Payload {
+    let reactor: LiarGameSubjectReactor
+    let mode: LiarGameMode
+    let memberCount: Int
+  }
 
   // MARK: Properties
+
+  private let dependency: Dependency
   private var mode: LiarGameMode
   private var memberCount = 3
   var disposeBag = DisposeBag()
 
   // MARK: UI
+
   private let flexLayoutContainer = UIView()
   private var subjectButtons = LiarGameSubject.allCases.map { SubjectButtonWrapped(subject: $0, button: $0.createButton()) }
 
   // MARK: Initialize
-  init(reactor: LiarGameSubjectReactor, mode: LiarGameMode, memberCount: Int) {
-    defer { self.reactor = reactor }
-    self.mode = mode
-    self.memberCount = memberCount
+
+  init(dependency: Dependency, payload: Payload) {
+    defer { self.reactor = payload.reactor }
+    mode = payload.mode
+    memberCount = payload.memberCount
+    self.dependency = dependency
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -40,6 +59,7 @@ final class LiarGameSubjectViewController: UIViewController, View {
   }
 
   // MARK: Layout
+
   override func viewDidLayoutSubviews() {
     flexLayoutContainer.pin.all(view.pin.safeArea)
     flexLayoutContainer.flex.layout()
@@ -62,6 +82,7 @@ final class LiarGameSubjectViewController: UIViewController, View {
 }
 
 // MARK: - Binding Method
+
 extension LiarGameSubjectViewController {
   private func bindSubjectButtonTapped(with reactor: LiarGameSubjectReactor) {
     subjectButtons.forEach {
@@ -80,11 +101,14 @@ extension LiarGameSubjectViewController {
       .distinctUntilChanged()
       .withUnretained(self)
       .subscribe(onNext: { `self`, subject in
-        let liarGameVC = LiarGameViewController(
-          reactor: LiarGameReactor(),
-          subject: subject,
+        let factory = self.dependency.liarGameFactory
+        let reactor = factory.dependency.reactorFactory.create()
+
+        let liarGameVC = factory.create(payload: .init(
+          reactor: reactor,
           mode: self.mode,
-          memberCount: self.memberCount)
+          memberCount: self.memberCount,
+          subject: subject))
         liarGameVC.modalPresentationStyle = .fullScreen
         self.navigationController?.pushViewController(liarGameVC, animated: true)
       }).disposed(by: disposeBag)

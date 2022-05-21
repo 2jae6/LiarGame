@@ -5,23 +5,33 @@
 //  Created by JK on 2022/04/21.
 //
 
+import Pure
 import ReactorKit
 import RxSwift
 import Then
 import UIKit
 
-final class RandomMusicQuizViewController: UIViewController, View {
+final class RandomMusicQuizViewController: UIViewController, View, FactoryModule {
+  struct Dependency {
+    let reactorFactory: RandomMusicQuizReactor.Factory
+  }
+
+  struct Payload {
+    let reactor: RandomMusicQuizReactor
+  }
 
   // MARK: Properties
 
+  private let dependency: Dependency
   var disposeBag = DisposeBag()
   private let content = RandomQuizView()
 
   // MARK: Initilaize
 
-  init(reactor: RandomMusicQuizReactor) {
+  init(dependency: Dependency, payload: Payload) {
+    defer { self.reactor = payload.reactor }
+    self.dependency = dependency
     super.init(nibName: nil, bundle: nil)
-    self.reactor = reactor
   }
 
   @available(*, unavailable)

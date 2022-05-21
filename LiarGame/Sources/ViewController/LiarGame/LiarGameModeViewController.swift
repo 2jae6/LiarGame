@@ -5,25 +5,33 @@
 //  Created by Jay on 2022/04/19.
 //
 
+import UIKit
+
 import FlexLayout
 import PinLayout
+import Pure
 import ReactorKit
 import RxCocoa
 import RxSwift
-import UIKit
 
-final class LiarGameModeViewController: UIViewController, View {
+final class LiarGameModeViewController: UIViewController, View, FactoryModule {
 
-  init(reactor: LiarGameModeReactor) {
+  struct Dependency {
+    let reactorFactory: LiarGameModeReactor.Factory
+    let liarGameSubjectFactory: LiarGameSubjectViewController.Factory
+  }
+
+  struct Payload {
+    let reactor: LiarGameModeReactor
+  }
+
+  private let dependency: Dependency
+
+  init(dependency: Dependency, payload: Payload) {
+    defer { self.reactor = payload.reactor }
+    self.dependency = dependency
     super.init(nibName: nil, bundle: nil)
-    self.reactor = reactor
-    view.addSubview(flexLayoutContainer)
-    flexLayoutContainer.flex.direction(.column).justifyContent(.center).alignItems(.center).padding(10).define { flex in
-      flex.addItem(defaultLiarGame).width(200).height(50).backgroundColor(.primaryColor)
-      flex.addItem(stupidLiarGame).width(200).height(50).backgroundColor(.primaryColor).marginTop(10)
-      flex.addItem(memberCountLabel).width(200).height(50).backgroundColor(.white).marginTop(30)
-      flex.addItem(memberCountStepper).backgroundColor(.red).marginTop(10)
-    }
+    setLayout()
   }
 
   required init?(coder _: NSCoder) {
@@ -100,20 +108,35 @@ extension LiarGameModeViewController {
       .distinctUntilChanged()
       .withUnretained(self)
       .subscribe(onNext: { `self`, mode in
-        let liarGameSubjectVC = LiarGameSubjectViewController(
-          reactor: LiarGameSubjectReactor(),
-          mode: mode,
-          memberCount: Int(self.memberCountStepper.value))
+        let factory = self.dependency.liarGameSubjectFactory
+        let reactor = factory.dependency.reactorFactory.create()
+
+        let liarGameSubjectVC = factory.create(
+          payload: .init(
+            reactor: reactor,
+            mode: mode,
+            memberCount: Int(self.memberCountStepper.value)))
         liarGameSubjectVC.modalPresentationStyle = .fullScreen
         self.navigationController?.pushViewController(liarGameSubjectVC, animated: true)
       }).disposed(by: disposeBag)
 
   }
 
-  func bindingStepper() {
+  private func bindingStepper() {
     memberCountStepper.rx.value
       .map { String(Int($0)) }
       .bind(to: memberCountLabel.rx.text)
       .disposed(by: disposeBag)
   }
+
+  private func setLayout() {
+    view.addSubview(flexLayoutContainer)
+    flexLayoutContainer.flex.direction(.column).justifyContent(.center).alignItems(.center).padding(10).define { flex in
+      flex.addItem(defaultLiarGame).width(200).height(50).backgroundColor(.primaryColor)
+      flex.addItem(stupidLiarGame).width(200).height(50).backgroundColor(.primaryColor).marginTop(10)
+      flex.addItem(memberCountLabel).width(200).height(50).backgroundColor(.white).marginTop(30)
+      flex.addItem(memberCountStepper).backgroundColor(.red).marginTop(10)
+    }
+  }
+
 }

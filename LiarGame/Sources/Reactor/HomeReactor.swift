@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import Pure
 import ReactorKit
 import RxCocoa
 import RxSwift
 
-final class HomeReactor: Reactor {
+final class HomeReactor: Reactor, FactoryModule {
   enum Action {
     case updateMode(GameMode)
   }
@@ -24,6 +25,10 @@ final class HomeReactor: Reactor {
   }
 
   let initialState = State()
+  
+  // MARK: Initialize
+  
+  init(dependency _: Void, payload _: Void) { }
 
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {

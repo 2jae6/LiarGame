@@ -6,11 +6,13 @@
 //
 
 import Foundation
+
+import Pure
 import ReactorKit
 import RxCocoa
 import RxSwift
 
-final class LiarGameModeReactor: Reactor {
+final class LiarGameModeReactor: Reactor, FactoryModule {
   enum Action {
     case selectMode(LiarGameMode?)
   }
@@ -24,6 +26,10 @@ final class LiarGameModeReactor: Reactor {
   }
 
   let initialState: State = .init()
+  
+  // MARK: Initialize
+  
+  init(dependency _: Void, payload _: Void) { }
 
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {

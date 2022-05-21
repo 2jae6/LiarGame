@@ -7,22 +7,52 @@
 
 import FlexLayout
 import PinLayout
+import Pure
 import ReactorKit
 import RxCocoa
 import RxSwift
 import UIKit
 
-final class HomeViewController: UIViewController, View {
+final class HomeViewController: UIViewController, View, FactoryModule {
   typealias Reactor = HomeReactor
 
-  init(reactor: HomeReactor) {
+  // MARK: Depdency & Payload
+
+  struct Dependency {
+    let reactorFactory: HomeReactor.Factory
+
+    let randomMusicQuizFactory: RandomMusicQuizViewController.Factory
+    let liarGameModeFactory: LiarGameModeViewController.Factory
+  }
+
+  struct Payload {
+    let reactor: HomeReactor
+  }
+
+  // MARK: Properties
+
+  private let dependency: Dependency
+  private let flexLayoutContainer: UIView = .init()
+
+  var disposeBag: DisposeBag = .init()
+
+  private lazy var gameList = [liarGameStartButton, randomMusicQuizButton]
+  private let liarGameStartButton = makeGameButton(str: "라이어 게임")
+  private let randomMusicQuizButton = makeGameButton(str: "랜덤 음악 맞추기")
+
+  // MARK: Initialize
+
+  init(dependency: Dependency, payload: Payload) {
+    defer { reactor = payload.reactor }
+    self.dependency = dependency
     super.init(nibName: nil, bundle: nil)
-    self.reactor = reactor
     setupView()
   }
 
   @available(*, unavailable)
   required init?(coder _: NSCoder) { fatalError() }
+
+  // MARK: Life Cycle
 
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
@@ -34,14 +64,6 @@ final class HomeViewController: UIViewController, View {
     super.viewDidLoad()
     view.backgroundColor = .background
   }
-
-  private let flexLayoutContainer: UIView = .init()
-
-  var disposeBag: DisposeBag = .init()
-
-  private lazy var gameList = [liarGameStartButton, randomMusicQuizButton]
-  private let liarGameStartButton = makeGameButton(str: "라이어 게임")
-  private let randomMusicQuizButton = makeGameButton(str: "랜덤 음악 맞추기")
 }
 
 // MARK: - Setup View
@@ -83,12 +105,16 @@ extension HomeViewController {
       .subscribe(onNext: { `self`, mode in
         switch mode {
         case .liarGame:
-          let liarVC = LiarGameModeViewController(reactor: LiarGameModeReactor())
+          let factory = self.dependency.liarGameModeFactory
+          let reactor = factory.dependency.reactorFactory.create()
+          let liarVC = factory.create(payload: .init(reactor: reactor))
           liarVC.modalPresentationStyle = .fullScreen
           self.navigationController?.pushViewController(liarVC, animated: true)
         case .randomMusicQuiz:
-          let reactor = RandomMusicQuizReactor(repository: RandomMusicRepository())
-          let vc = RandomMusicQuizViewController(reactor: reactor)
+          let factory = self.dependency.randomMusicQuizFactory
+          let reactor = factory.dependency.reactorFactory.create()
+
+          let vc = factory.create(payload: .init(reactor: reactor))
           vc.modalPresentationStyle = .fullScreen
           self.navigationController?.pushViewController(vc, animated: true)
         }
